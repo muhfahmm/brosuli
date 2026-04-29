@@ -7,6 +7,10 @@ requireLogin();
 $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.created_at DESC");
 $products = $stmt->fetchAll();
 
+// Fetch all categories for the modal
+$cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$categories = $cat_stmt->fetchAll();
+
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
@@ -136,10 +140,11 @@ if (isset($_GET['delete'])) {
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select name="category_id" class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
-                            <!-- Fetch categories here -->
-                            <option value="1">Breads</option>
-                            <option value="2">Cakes</option>
+                        <select name="category_id" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                            <option value="">Select Category</option>
+                            <?php foreach ($categories as $cat): ?>
+                                <option value="<?php echo $cat['id']; ?>"><?php echo htmlspecialchars($cat['name']); ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     <div>
