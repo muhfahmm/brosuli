@@ -5,7 +5,7 @@ requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'] ?? '';
-    $category_id = $_POST['category_id'] ?? null;
+    $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     $price = $_POST['price'] ?? 0;
     $description = $_POST['description'] ?? '';
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
