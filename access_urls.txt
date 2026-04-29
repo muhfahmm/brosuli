@@ -1,0 +1,14 @@
+Brosuli Bakery - Website Access URLs
+
+User Landing Page:
+http://localhost/project-klien/website-brosuli/frontend/index.php
+
+Admin Panel:
+http://localhost/project-klien/website-brosuli/backend/login.php
+
+Register Admin:
+http://localhost/project-klien/website-brosuli/backend/register.php
+
+Admin Credentials (Default):
+Username: admin
+Password: admin123
