@@ -45,11 +45,11 @@ if (isset($_GET['delete'])) {
                 <i class="fas fa-bread-slice"></i>
                 <span>Products</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
+            <a href="categories.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
                 <i class="fas fa-tags"></i>
                 <span>Categories</span>
             </a>
-            <a href="#" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
+            <a href="banners.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
                 <i class="fas fa-images"></i>
                 <span>Banners</span>
             </a>
