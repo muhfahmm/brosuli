@@ -22,9 +22,10 @@ if (isset($_GET['delete'])) {
 // Handle Add
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $name = $_POST['name'] ?? '';
+    $description = $_POST['description'] ?? '';
     if ($name) {
-        $stmt = $pdo->prepare("INSERT INTO categories (name) VALUES (?)");
-        $stmt->execute([$name]);
+        $stmt = $pdo->prepare("INSERT INTO categories (name, description) VALUES (?, ?)");
+        $stmt->execute([$name, $description]);
         header('Location: categories.php');
     }
 }
@@ -60,6 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                 <i class="fas fa-images"></i>
                 <span>Banners</span>
             </a>
+            <a href="best_sellers.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
+                <i class="fas fa-star"></i>
+                <span>Best Sellers</span>
+            </a>
         </nav>
         <div class="p-4 border-t border-white/10">
             <a href="login.php" class="flex items-center space-x-3 text-red-300 hover:text-red-100 transition-colors">
@@ -91,6 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                         <tr>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">ID</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Category Name</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Description</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase text-right">Actions</th>
                         </tr>
                     </thead>
@@ -99,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 text-gray-500"><?php echo $cat['id']; ?></td>
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($cat['name']); ?></td>
+                            <td class="px-6 py-4 text-gray-500 text-sm italic"><?php echo htmlspecialchars($cat['description'] ?: '-'); ?></td>
                             <td class="px-6 py-4 text-right">
                                 <a href="?delete=<?php echo $cat['id']; ?>" 
                                     onclick="return confirm('Delete this category?')"
@@ -123,6 +130,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
                     <input type="text" name="name" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea name="description" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500" placeholder="Describe this category..."></textarea>
                 </div>
                 <button type="submit" name="add_category" class="w-full bg-[#4A2C2A] text-white py-3 rounded-lg font-semibold hover:bg-[#3D2422]">
                     Save Category

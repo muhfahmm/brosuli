@@ -11,7 +11,7 @@ $products = $stmt->fetchAll();
 $cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
 $categories = $cat_stmt->fetchAll();
 
-// Handle Delete
+// Deletion logic is kept here for the confirm button redirect
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
@@ -52,6 +52,10 @@ if (isset($_GET['delete'])) {
             <a href="banners.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
                 <i class="fas fa-images"></i>
                 <span>Banners</span>
+            </a>
+            <a href="best_sellers.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
+                <i class="fas fa-star"></i>
+                <span>Best Sellers</span>
             </a>
         </nav>
         <div class="p-4 border-t border-white/10">
@@ -94,19 +98,19 @@ if (isset($_GET['delete'])) {
                         <?php foreach ($products as $product): ?>
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4">
-                                <img src="<?php echo $product['image_url'] ?: 'https://via.placeholder.com/60'; ?>" 
+                                <img src="../<?php echo $product['image_url'] ?: 'https://via.placeholder.com/60'; ?>" 
                                     class="w-12 h-12 object-cover rounded-lg border border-gray-200">
                             </td>
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($product['name']); ?></td>
                             <td class="px-6 py-4 text-gray-600"><?php echo htmlspecialchars($product['category_name']); ?></td>
                             <td class="px-6 py-4 font-semibold text-amber-600">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></td>
                             <td class="px-6 py-4 text-right space-x-3">
-                                <a href="#" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></a>
-                                <a href="?delete=<?php echo $product['id']; ?>" 
-                                    onclick="return confirm('Are you sure?')"
-                                    class="text-red-400 hover:text-red-600 transition-colors">
+                                <button onclick="openEditModal(<?php echo $product['id']; ?>)" class="text-blue-500 hover:text-blue-700 transition-colors">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button onclick="openDeleteModal(<?php echo $product['id']; ?>)" class="text-red-400 hover:text-red-600 transition-colors">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </button>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -170,5 +174,7 @@ if (isset($_GET['delete'])) {
             </form>
         </div>
     </div>
+    
+    <?php include 'product_modals.php'; ?>
 </body>
 </html>

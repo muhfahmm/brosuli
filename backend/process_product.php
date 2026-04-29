@@ -4,13 +4,14 @@ require_once '../db/db.php';
 requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'] ?? null;
     $name = $_POST['name'] ?? '';
     $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     $price = $_POST['price'] ?? 0;
     $description = $_POST['description'] ?? '';
     $is_featured = isset($_POST['is_featured']) ? 1 : 0;
     
-    $image_url = '';
+    $image_url = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
         $upload_dir = '../uploads/';
         if (!is_dir($upload_dir)) {
@@ -24,8 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->execute([$name, $category_id, $price, $description, $image_url, $is_featured]);
+    if ($id) {
+        // Update
+        if ($image_url) {
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, category_id = ?, price = ?, description = ?, image_url = ?, is_featured = ? WHERE id = ?");
+            $stmt->execute([$name, $category_id, $price, $description, $image_url, $is_featured, $id]);
+        } else {
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, category_id = ?, price = ?, description = ?, is_featured = ? WHERE id = ?");
+            $stmt->execute([$name, $category_id, $price, $description, $is_featured, $id]);
+        }
+    } else {
+        // Create
+        $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $category_id, $price, $description, $image_url ?: '', $is_featured]);
+    }
 
     header('Location: index.php');
     exit();

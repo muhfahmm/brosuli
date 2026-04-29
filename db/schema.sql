@@ -10,22 +10,12 @@ CREATE TABLE IF NOT EXISTS admin (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insert default admin (password: admin123)
-INSERT INTO admin (username, password) VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi') 
-ON DUPLICATE KEY UPDATE password = VALUES(password);
-
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL UNIQUE
+    name VARCHAR(50) NOT NULL UNIQUE,
+    description TEXT
 );
-
--- Insert default categories
-INSERT IGNORE INTO categories (id, name) VALUES 
-(1, 'Breads'), 
-(2, 'Cakes'), 
-(3, 'Pastries'), 
-(4, 'Cookies');
 
 -- Products table
 CREATE TABLE IF NOT EXISTS products (
@@ -44,8 +34,17 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS banners (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100),
+    subtitle TEXT,
     image_url VARCHAR(255) NOT NULL,
     link_url VARCHAR(255),
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Best Sellers table
+CREATE TABLE IF NOT EXISTS best_sellers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    display_order INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
