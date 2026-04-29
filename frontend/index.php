@@ -62,7 +62,6 @@ $categories = $cat_stmt->fetchAll();
                 <a href="#home" class="hover:text-secondary transition-colors">Home</a>
                 <a href="#products" class="hover:text-secondary transition-colors">Our Menu</a>
                 <a href="#about" class="hover:text-secondary transition-colors">Our Story</a>
-                <a href="#contact" class="hover:text-secondary transition-colors">Contact</a>
             </div>
             <div class="flex items-center space-x-4">
                 <button class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md transform hover:scale-105">
@@ -357,6 +356,14 @@ $categories = $cat_stmt->fetchAll();
             </div>
         </div>
     </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/6281234567890" target="_blank" class="fixed bottom-8 right-8 z-[100] bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group">
+        <i class="fab fa-whatsapp text-3xl"></i>
+        <span class="absolute right-full mr-4 bg-white text-primary px-4 py-2 rounded-xl text-sm font-bold shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+            Chat with us!
+        </span>
+    </a>
 
     <script>
         // Navbar scroll effect
