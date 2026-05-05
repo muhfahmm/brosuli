@@ -5,31 +5,50 @@ session_start();
 $error = '';
 $success = '';
 
+// Check if a superadmin already exists
+$super_stmt = $pdo->query("SELECT COUNT(*) FROM admin WHERE role = 'superadmin'");
+$superadmin_exists = $super_stmt->fetchColumn() > 0;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
     $confirm_password = $_POST['confirm_password'] ?? '';
+    $role = $_POST['role'] ?? 'admin_cabang';
+    $branch_id = $_POST['branch_id'] ?? null;
 
-    if ($password !== $confirm_password) {
-        $error = 'Passwords do not match';
+    // Force role to admin_cabang if superadmin already exists
+    if ($superadmin_exists && $role === 'superadmin') {
+        $error = 'Pendaftaran Superadmin sudah ditutup. Silakan daftar sebagai Admin Cabang.';
     } else {
-        // Check if username already exists
-        $stmt = $pdo->prepare("SELECT id FROM admin WHERE username = ?");
-        $stmt->execute([$username]);
-        if ($stmt->fetch()) {
-            $error = 'Username already taken';
+        if (empty($branch_id)) $branch_id = null;
+
+        if ($password !== $confirm_password) {
+            $error = 'Passwords do not match';
         } else {
-            // Hash password and insert
-            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("INSERT INTO admin (username, password) VALUES (?, ?)");
-            if ($stmt->execute([$username, $hashed_password])) {
-                $success = 'Registration successful! You can now login.';
+            // Check if username already exists
+            $stmt = $pdo->prepare("SELECT id FROM admin WHERE username = ?");
+            $stmt->execute([$username]);
+            if ($stmt->fetch()) {
+                $error = 'Username already taken';
             } else {
-                $error = 'Something went wrong. Please try again.';
+                // Hash password and insert
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+                $stmt = $pdo->prepare("INSERT INTO admin (username, password, role, branch_id) VALUES (?, ?, ?, ?)");
+                if ($stmt->execute([$username, $hashed_password, $role, $branch_id])) {
+                    $success = 'Registration successful! You can now login.';
+                    // Refresh superadmin exists status after successful registration
+                    $superadmin_exists = true;
+                } else {
+                    $error = 'Something went wrong. Please try again.';
+                }
             }
         }
     }
 }
+
+// Fetch branches for selection
+$branch_stmt = $pdo->query("SELECT id, name FROM branches ORDER BY name ASC");
+$branches = $branch_stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,6 +100,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm_password" required 
                     class="w-full px-4 py-3 rounded-lg border border-amber-200 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all">
             </div>
+            <div>
+                <label class="block text-sm font-medium text-amber-900 mb-1">Role</label>
+                <select name="role" id="roleSelect" onchange="toggleBranchSelect()" class="w-full px-4 py-3 rounded-lg border border-amber-200 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+                    <option value="admin_cabang">Admin Cabang (Terbatas)</option>
+                    <?php if (!$superadmin_exists): ?>
+                        <option value="superadmin">Superadmin (Akses Penuh)</option>
+                    <?php endif; ?>
+                </select>
+                <?php if ($superadmin_exists): ?>
+                    <p class="text-[10px] text-amber-600 mt-1 italic">* Pendaftaran Superadmin sudah penuh. Akun baru akan menjadi Admin Cabang.</p>
+                <?php endif; ?>
+            </div>
+            <div id="branchSelectWrapper">
+                <label class="block text-sm font-medium text-amber-900 mb-1">Wilayah Cabang</label>
+                <select name="branch_id" class="w-full px-4 py-3 rounded-lg border border-amber-200 focus:ring-2 focus:ring-amber-500 outline-none transition-all">
+                    <option value="">Pilih Cabang...</option>
+                    <?php foreach ($branches as $branch): ?>
+                        <option value="<?php echo $branch['id']; ?>"><?php echo htmlspecialchars($branch['name']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <script>
+                function toggleBranchSelect() {
+                    const role = document.getElementById('roleSelect').value;
+                    const wrapper = document.getElementById('branchSelectWrapper');
+                    if (role === 'admin_cabang') {
+                        wrapper.classList.remove('hidden');
+                    } else {
+                        wrapper.classList.add('hidden');
+                    }
+                }
+            </script>
             <button type="submit" 
                 class="w-full bg-[#4A2C2A] text-white py-3 rounded-lg font-semibold hover:bg-[#3D2422] transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 active:translate-y-0">
                 Register Account

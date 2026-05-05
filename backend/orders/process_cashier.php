@@ -15,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Generate unique Order ID
         $order_id = 'BRSL-POS-' . strtoupper(substr(uniqid(), -5)) . '-' . date('dmY');
 
-        $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, payment_method, items_json) 
-                               VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $branch_id = $_SESSION['admin_branch_id'] ?? null;
+        
+        $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, payment_method, items_json, branch_id) 
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         
         $success = $stmt->execute([
             $order_id,
@@ -25,7 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $total_amount,
             'settlement', // Auto-settled for Cashier
             $payment_method,
-            $items_json
+            $items_json,
+            $branch_id
         ]);
 
         if ($success) {

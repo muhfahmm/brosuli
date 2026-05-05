@@ -1,49 +1,49 @@
 <?php
 session_start();
+require_once '../db/db.php';
 require_once '../config.php';
 
-$branches = [
-    [
-        'name' => 'Brosuli Boyolali (Utama)',
-        'address' => 'Jl. Pandanaran No.275, Sidoharjo, Banaran, Kec. Boyolali, Kabupaten Boyolali, Jawa Tengah 57313 (Samping Ayam Penyet Surabaya).',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.423!2d110.5997076!3d-7.5242328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a6f89085a6635%3A0x8c6cde5506ae2013!2sOleh%20Oleh%20Khas%20Boyolali%20%7C%20Brownies%20Susu%20Boyolali%20%7C%20Brosuli%20Boyolali!5e0'
-    ],
-    [
-        'name' => 'Brosuli Mojosongo (Boyolali)',
-        'address' => 'Ruko Techno Park, Jl. Merdeka Timur, Mojosongo, Kec. Mojosongo, Kabupaten Boyolali, Jawa Tengah 57322.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.456!2d110.638!3d-7.523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a6f6990498a4d%3A0x7d6a598716b6070a!2sBrosuli%20Mojosongo!5e0'
-    ],
-    [
-        'name' => 'Brosuli Kartasura',
-        'address' => 'Jl. Brigjen Katamso, Ngemplak, Kartasura, Kec. Kartasura, Kabupaten Sukoharjo, Jawa Tengah 57169.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.024!2d110.738!3d-7.572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1500131098fb%3A0x2fa2dc22888056d4!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Kartasura!5e0'
-    ],
-    [
-        'name' => 'Brosuli Baki',
-        'address' => 'Jl. Ovensari Raya No.21, Kadilangu, Baki, Kec. Baki, Kabupaten Sukoharjo, Jawa Tengah 57556.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.727!2d110.782!3d-7.604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1552de0c535f%3A0xf2d01b628e513881!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Baki!5e0'
-    ],
-    [
-        'name' => 'Brosuli Mojolaban',
-        'address' => 'Jl. Lettu Rm.Hartono No.39, Gadingan, Kec. Mojolaban, Kabupaten Sukoharjo, Jawa Tengah 57554.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.673!2d110.867!3d-7.604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1760df291679%3A0xbe2ace869208571a!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Mojolaban!5e0'
-    ],
-    [
-        'name' => 'Brosuli Colomadu',
-        'address' => 'Jl. Adi Sumarmo, Krobyongan, Gawanan, Kec. Colomadu, Kabupaten Karanganyar, Jawa Tengah 57175.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.3!2d110.76!3d-7.531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a15f43fe33869%3A0xf50501cf0c8427b1!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Colomadu!5e0'
-    ],
-    [
-        'name' => 'Brosuli Pedan',
-        'address' => 'Jl. Raya Ps. Pedan, Kedungan, Kec. Pedan, Kabupaten Klaten, Jawa Tengah 57468.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.197!2d110.703!3d-7.694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a41d6ab1417b7%3A0x44557a83949a2df8!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Pedan!5e0'
-    ],
-    [
-        'name' => 'Brosuli Jatinom',
-        'address' => 'Jl. Klaten-Boyolali No.KM. 8, Bonyokan, Kec. Jatinom, Kabupaten Klaten, Jawa Tengah 57481.',
-        'map_url' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.5!2d110.65!3d-7.65!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a43ec985b0d01%3A0x5d9e5d4a6f8b9e6f!2sBrosuli%20Jatinom!5e0'
-    ]
-];
+// Fetch branches from database
+$branch_stmt = $pdo->query("SELECT * FROM branches ORDER BY name ASC");
+$branches_db = $branch_stmt->fetchAll();
+
+// Get selected branch from session
+$selected_branch_id = $_SESSION['user_branch_id'] ?? null;
+$selected_branch_name = 'Pilih Cabang';
+
+if ($selected_branch_id) {
+    foreach ($branches_db as $branch) {
+        if ($branch['id'] == $selected_branch_id) {
+            $selected_branch_name = $branch['name'];
+            break;
+        }
+    }
+}
+
+// Keep the map URLs but map them to the DB branches if possible, 
+// or just use the DB branches and add map URLs if they were in the original array.
+// For now, I'll merge them.
+$branches = [];
+foreach ($branches_db as $b_db) {
+    $map_url = '';
+    // Find matching map URL from original list
+    $original_maps = [
+        'Brosuli Boyolali (Utama)' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.423!2d110.5997076!3d-7.5242328!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a6f89085a6635%3A0x8c6cde5506ae2013!2sOleh%20Oleh%20Khas%20Boyolali%20%7C%20Brownies%20Susu%20Boyolali%20%7C%20Brosuli%20Boyolali!5e0',
+        'Brosuli Mojosongo' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.456!2d110.638!3d-7.523!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a6f6990498a4d%3A0x7d6a598716b6070a!2sBrosuli%20Mojosongo!5e0',
+        'Brosuli Kartasura' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.024!2d110.738!3d-7.572!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1500131098fb%3A0x2fa2dc22888056d4!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Kartasura!5e0',
+        'Brosuli Baki' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.727!2d110.782!3d-7.604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1552de0c535f%3A0xf2d01b628e513881!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Baki!5e0',
+        'Brosuli Mojolaban' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3954.673!2d110.867!3d-7.604!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a1760df291679%3A0xbe2ace869208571a!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Mojolaban!5e0',
+        'Brosuli Colomadu' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.3!2d110.76!3d-7.531!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a15f43fe33869%3A0xf50501cf0c8427b1!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Colomadu!5e0',
+        'Brosuli Pedan' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.197!2d110.703!3d-7.694!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a41d6ab1417b7%3A0x44557a83949a2df8!2sBrownies%20Susu%20Boyolali%20%7C%20Brosuli%20Pedan!5e0',
+        'Brosuli Jatinom' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3953.5!2d110.65!3d-7.65!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a43ec985b0d01%3A0x5d9e5d4a6f8b9e6f!2sBrosuli%20Jatinom!5e0'
+    ];
+    $branches[] = [
+        'id' => $b_db['id'],
+        'name' => $b_db['name'],
+        'address' => $b_db['address'],
+        'map_url' => $original_maps[$b_db['name']] ?? ''
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -95,9 +95,13 @@ $branches = [
             <div class="flex items-center space-x-8 font-medium">
                 <a href="index.php" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
+                <button onclick="document.getElementById('branchModal').classList.remove('hidden')" class="flex items-center space-x-2 text-secondary hover:text-primary transition-all bg-secondary/10 px-4 py-1.5 rounded-full border border-secondary/20">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="text-sm font-bold"><?php echo htmlspecialchars($selected_branch_name); ?></span>
+                </button>
             </div>
             <div class="flex items-center space-x-4">
-                <button onclick="document.getElementById('cart-sidebar').classList.remove('translate-x-full')" class="relative p-2 text-primary hover:text-secondary transition-colors">
+                <button onclick="toggleCart()" class="relative p-2 text-primary hover:text-secondary transition-colors">
                     <i class="fas fa-shopping-bag text-2xl"></i>
                     <span class="cart-count absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
                 </button>
@@ -124,17 +128,7 @@ $branches = [
             <!-- Items populated by JS -->
         </div>
 
-        <!-- Customer Info Section -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 space-y-3">
-            <div class="relative">
-                <input type="text" id="customer-name" placeholder="Nama Anda" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
-                <i class="fas fa-user absolute right-4 top-3 text-gray-300 text-xs"></i>
-            </div>
-            <div class="relative">
-                <input type="tel" id="customer-phone" placeholder="Nomor WhatsApp" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
-                <i class="fas fa-phone absolute right-4 top-3 text-gray-300 text-xs"></i>
-            </div>
-        </div>
+
         
         <div class="p-8 bg-white border-t border-gray-100 space-y-3">
             <div class="flex justify-between items-center mb-4">
@@ -152,7 +146,7 @@ $branches = [
             <p class="text-[10px] text-center text-gray-400 mt-4 uppercase tracking-widest">Pesan hari ini, Panggang hari ini</p>
         </div>
     </div>
-    <script src="js/cart.js?v=1.1" defer></script>
+    <script src="js/cart.js?v=1.2" defer></script>
 
     <!-- Header Section -->
     <header class="pt-40 pb-20 text-center px-6">
@@ -163,6 +157,11 @@ $branches = [
         </div>
     </header>
 
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/62895327349264?text=Halo%20Brosuli%20Bakery%2C%20saya%20ingin%20bertanya..." target="_blank" class="fixed bottom-8 right-8 z-[100] bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group">
+        <i class="fab fa-whatsapp text-3xl"></i>
+    </a>
+    
     <!-- Zig-Zag Branches Section -->
     <section class="max-w-7xl mx-auto px-6 pb-32 space-y-24">
         <?php foreach ($branches as $index => $branch): ?>
@@ -233,5 +232,88 @@ $branches = [
         </div>
     </footer>
 
+    <!-- Branch Selection Modal -->
+    <div id="branchModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-500 border border-white/20">
+            <div class="p-8 bg-primary text-white text-center relative">
+                <button onclick="document.getElementById('branchModal').classList.add('hidden')" class="absolute top-6 right-8 text-white/50 hover:text-white transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                    <i class="fas fa-map-marked-alt text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-serif font-bold">Pilih Cabang Brosuli</h3>
+                <p class="text-white/70 mt-2">Pilih lokasi terdekat untuk mendapatkan layanan terbaik kami</p>
+            </div>
+            <div class="p-8 max-h-[60vh] overflow-y-auto space-y-3 bg-[#FDFCF6]">
+                <!-- Option: Cabang Pusat -->
+                <button onclick="selectBranch(1, 'Brosuli Boyolali (Pusat)')" 
+                    class="w-full text-left p-6 rounded-3xl border-2 transition-all group <?php echo 1 === (int)$selected_branch_id ? 'border-secondary bg-secondary/5 shadow-md' : 'border-emerald-100 bg-white hover:border-emerald-300 hover:shadow-lg'; ?>">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg group-hover:text-emerald-600 transition-colors">Brosuli Boyolali (Pusat)</h4>
+                                <p class="text-xs text-gray-500 mt-0.5 italic">Pusat Produksi & Distribusi Utama</p>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center transition-all <?php echo 1 === (int)$selected_branch_id ? 'bg-emerald-500 text-white' : 'bg-gray-50 text-gray-300 group-hover:bg-emerald-50 group-hover:text-emerald-500'; ?>">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="py-2 flex items-center gap-4 text-gray-300">
+                    <div class="h-px flex-1 bg-gray-100"></div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Cabang Lainnya</span>
+                    <div class="h-px flex-1 bg-gray-100"></div>
+                </div>
+
+                <?php foreach ($branches as $branch): ?>
+                <?php if ($branch['id'] == 1) continue; ?>
+                <button onclick="selectBranch(<?php echo $branch['id']; ?>, '<?php echo addslashes($branch['name']); ?>')" 
+                    class="w-full text-left p-6 rounded-3xl border-2 transition-all group <?php echo (int)$branch['id'] === (int)$selected_branch_id ? 'border-secondary bg-secondary/5 shadow-md' : 'border-gray-100 bg-white hover:border-secondary/30 hover:shadow-lg'; ?>">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg group-hover:text-secondary transition-colors"><?php echo htmlspecialchars($branch['name']); ?></h4>
+                            <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                                <i class="fas fa-location-dot text-gray-300"></i>
+                                <?php echo htmlspecialchars($branch['address']); ?>
+                            </p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center transition-all <?php echo (int)$branch['id'] === (int)$selected_branch_id ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-300 group-hover:bg-secondary/10 group-hover:text-secondary'; ?>">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="p-6 bg-gray-50 text-center border-t border-gray-100 flex flex-col gap-2">
+                <?php if ($selected_branch_id): ?>
+                <button onclick="selectBranch('', 'Pilih Cabang')" class="text-xs text-secondary font-bold hover:underline">
+                    <i class="fas fa-undo mr-1"></i> Reset Pilihan / Lihat Semua
+                </button>
+                <?php endif; ?>
+                <p class="text-[10px] text-gray-400">Pilihan cabang akan menyesuaikan ketersediaan stok dan layanan kurir.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectBranch(id, name) {
+            const formData = new FormData();
+            formData.append('branch_id', id);
+            
+            fetch('api/set_branch.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(() => {
+                location.reload();
+            });
+        }
+    </script>
 </body>
 </html>

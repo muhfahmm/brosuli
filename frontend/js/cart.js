@@ -6,6 +6,13 @@ cart = cart.filter(item => !item.isDeleted);
 let removedItemIds = JSON.parse(localStorage.getItem('brosuli_removed_ids')) || [];
 let isPaid = false; // Payment status flag
 
+function toggleCart() {
+    const sidebar = document.getElementById('cart-sidebar');
+    if (sidebar) {
+        sidebar.classList.toggle('translate-x-full');
+    }
+}
+
 function saveCart() {
     localStorage.setItem('brosuli_cart', JSON.stringify(cart));
     localStorage.setItem('brosuli_removed_ids', JSON.stringify(removedItemIds));
@@ -13,11 +20,6 @@ function saveCart() {
 }
 
 function addToCart(product) {
-    if (removedItemIds.includes(product.id)) {
-        showToast(`❌ ${product.name} telah dihapus dan tidak dapat ditambahkan lagi.`);
-        return;
-    }
-    
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
         existingItem.quantity += 1;
@@ -133,18 +135,10 @@ function payWithMidtrans() {
         return;
     }
 
-    const customerName = document.getElementById('customer-name')?.value;
-    const customerPhone = document.getElementById('customer-phone')?.value;
-
-    if (!customerName || !customerPhone) {
-        showToast('Mohon isi Nama dan Nomor WhatsApp Anda!');
-        return;
-    }
-
     const orderData = {
         items: activeItems,
-        customer_name: customerName,
-        customer_phone: customerPhone
+        customer_name: "Pelanggan Brosuli",
+        customer_phone: "0000000000"
     };
 
     showToast('Menyiapkan pembayaran...');
@@ -189,15 +183,11 @@ function checkoutWhatsApp() {
         return;
     }
 
-    const customerName = document.getElementById('customer-name')?.value;
-    const customerPhone = document.getElementById('customer-phone')?.value;
-
     const phoneNumber = '62895327349264';
     let message = `*Halo Brosuli Bakery!* 🍞✨\n\n`;
     message += `*STATUS: PEMBAYARAN LUNAS (MIDTRANS)* ✅\n`;
     message += `----------------------------\n`;
-    message += `👤 *Nama:* ${customerName}\n`;
-    message += `📞 *No. WA:* ${customerPhone}\n`;
+    message += `👤 *Nama:* Pelanggan Brosuli\n`;
     message += `----------------------------\n\n`;
     
     let total = 0;

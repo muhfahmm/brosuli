@@ -7,15 +7,62 @@ require_once '../config.php';
 $cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
 $categories = $cat_stmt->fetchAll();
 
+// Get selected branch from session
+$selected_branch_id = $_SESSION['user_branch_id'] ?? null;
+
 // Fetch products based on category filter
 $category_filter = isset($_GET['category']) ? $_GET['category'] : null;
-if ($category_filter) {
-    $stmt = $pdo->prepare("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.category_id = ? ORDER BY p.name ASC");
-    $stmt->execute([$category_filter]);
+
+// Fetch products based on category filter with stock info (Only those active in this branch)
+if ($selected_branch_id) {
+    if ($category_filter) {
+        $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, bi.stock 
+                             FROM products p 
+                             INNER JOIN branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
+                             LEFT JOIN categories c ON p.category_id = c.id 
+                             WHERE p.category_id = ? ORDER BY p.name ASC");
+        $stmt->execute([$selected_branch_id, $category_filter]);
+    } else {
+        $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, bi.stock 
+                             FROM products p 
+                             INNER JOIN branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
+                             LEFT JOIN categories c ON p.category_id = c.id 
+                             ORDER BY p.name ASC");
+        $stmt->execute([$selected_branch_id]);
+    }
 } else {
-    $stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.name ASC");
+    // No branch selected: Show all products from master catalog
+    if ($category_filter) {
+        $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, 0 as stock 
+                             FROM products p 
+                             LEFT JOIN categories c ON p.category_id = c.id 
+                             WHERE p.category_id = ? ORDER BY p.name ASC");
+        $stmt->execute([$category_filter]);
+    } else {
+        $stmt = $pdo->query("SELECT p.*, c.name as category_name, 0 as stock 
+                             FROM products p 
+                             LEFT JOIN categories c ON p.category_id = c.id 
+                             ORDER BY p.name ASC");
+    }
 }
 $products = $stmt->fetchAll();
+
+// Fetch branches for selection
+$branch_stmt = $pdo->query("SELECT * FROM branches ORDER BY name ASC");
+$branches = $branch_stmt->fetchAll();
+
+// Get selected branch from session
+$selected_branch_id = $_SESSION['user_branch_id'] ?? null;
+$selected_branch_name = 'Pilih Cabang';
+
+if ($selected_branch_id) {
+    foreach ($branches as $branch) {
+        if ($branch['id'] == $selected_branch_id) {
+            $selected_branch_name = $branch['name'];
+            break;
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
@@ -26,7 +73,7 @@ $products = $stmt->fetchAll();
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="js/cart.js?v=1.1" defer></script>
+    <script src="js/cart.js?v=1.2" defer></script>
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="<?php echo MIDTRANS_CLIENT_KEY; ?>"></script>
     <script>
         tailwind.config = {
@@ -66,9 +113,13 @@ $products = $stmt->fetchAll();
             <div class="hidden md:flex items-center space-x-8 font-medium">
                 <a href="index.php#home" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="catalog.php" class="text-secondary">Menu Kami</a>
+                <button onclick="document.getElementById('branchModal').classList.remove('hidden')" class="flex items-center space-x-2 text-secondary hover:text-primary transition-all bg-secondary/10 px-4 py-1.5 rounded-full border border-secondary/20">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span class="text-sm font-bold"><?php echo htmlspecialchars($selected_branch_name); ?></span>
+                </button>
             </div>
             <div class="flex items-center space-x-4">
-                <button onclick="document.getElementById('cart-sidebar').classList.remove('translate-x-full')" class="relative p-2 text-primary hover:text-secondary transition-colors">
+                <button onclick="toggleCart()" class="relative p-2 text-primary hover:text-secondary transition-colors">
                     <i class="fas fa-shopping-bag text-2xl"></i>
                     <span class="cart-count absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
                 </button>
@@ -125,11 +176,24 @@ $products = $stmt->fetchAll();
                             <h3 class="text-xl font-bold mb-2 group-hover:text-secondary transition-colors"><?php echo htmlspecialchars($product['name']); ?></h3>
                             <p class="text-gray-500 text-sm mb-6 line-clamp-2"><?php echo htmlspecialchars($product['description']); ?></p>
                             <div class="flex items-center justify-between">
-                                <span class="text-xl font-bold text-primary">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></span>
-                                <button onclick='addToCart({id: <?php echo $product['id']; ?>, name: "<?php echo addslashes($product['name']); ?>", price: <?php echo $product['price']; ?>, image: "../<?php echo $product['image_url']; ?>"})' 
+                                <div class="flex flex-col">
+                                    <span class="text-xl font-bold text-primary">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></span>
+                                    <?php if ($selected_branch_id): ?>
+                                    <span class="text-[10px] font-bold uppercase tracking-tighter <?php echo $product['stock'] > 0 ? 'text-green-500' : 'text-red-500'; ?>">
+                                        <?php echo $product['stock'] > 0 ? 'Stok Tersedia (' . $product['stock'] . ')' : 'Stok Habis'; ?>
+                                    </span>
+                                    <?php endif; ?>
+                                </div>
+                                <?php if (!$selected_branch_id || $product['stock'] > 0): ?>
+                                <button onclick='handleAddToCart(<?php echo json_encode(["id" => $product["id"], "name" => $product["name"], "price" => (float)$product["price"], "image" => "../" . $product["image_url"]]); ?>)' 
                                     class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-secondary transition-colors shadow-lg">
                                     <i class="fas fa-plus"></i>
                                 </button>
+                                <?php else: ?>
+                                <button disabled class="w-10 h-10 bg-gray-200 text-gray-400 rounded-full flex items-center justify-center cursor-not-allowed">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -171,17 +235,7 @@ $products = $stmt->fetchAll();
             <!-- Items populated by JS -->
         </div>
 
-        <!-- Customer Info Section -->
-        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 space-y-3">
-            <div class="relative">
-                <input type="text" id="customer-name" placeholder="Nama Anda" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
-                <i class="fas fa-user absolute right-4 top-3 text-gray-300 text-xs"></i>
-            </div>
-            <div class="relative">
-                <input type="tel" id="customer-phone" placeholder="Nomor WhatsApp" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
-                <i class="fas fa-phone absolute right-4 top-3 text-gray-300 text-xs"></i>
-            </div>
-        </div>
+
         
         <div class="p-8 bg-white border-t border-gray-100 space-y-3">
             <div class="flex justify-between items-center mb-4">
@@ -201,9 +255,102 @@ $products = $stmt->fetchAll();
     </div>
 
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/62895327349264" target="_blank" class="fixed bottom-8 right-8 z-[100] bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group">
+    <a href="https://wa.me/62895327349264?text=Halo%20Brosuli%20Bakery%2C%20saya%20ingin%20bertanya..." target="_blank" class="fixed bottom-8 right-8 z-[100] bg-[#25D366] text-white w-16 h-16 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 group">
         <i class="fab fa-whatsapp text-3xl"></i>
     </a>
 
+    <!-- Branch Selection Modal -->
+    <div id="branchModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+        <div class="bg-white rounded-[2.5rem] w-full max-w-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-500 border border-white/20">
+            <div class="p-8 bg-primary text-white text-center relative">
+                <button onclick="document.getElementById('branchModal').classList.add('hidden')" class="absolute top-6 right-8 text-white/50 hover:text-white transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-white/20">
+                    <i class="fas fa-map-marked-alt text-3xl"></i>
+                </div>
+                <h3 class="text-3xl font-serif font-bold">Pilih Cabang Brosuli</h3>
+                <p class="text-white/70 mt-2">Pilih lokasi terdekat untuk mendapatkan layanan terbaik kami</p>
+            </div>
+            <div class="p-8 max-h-[60vh] overflow-y-auto space-y-3 bg-[#FDFCF6]">
+                <!-- Option: Cabang Pusat -->
+                <button onclick="selectBranch(1, 'Brosuli Boyolali (Pusat)')" 
+                    class="w-full text-left p-6 rounded-3xl border-2 transition-all group <?php echo 1 === (int)$selected_branch_id ? 'border-secondary bg-secondary/5 shadow-md' : 'border-emerald-100 bg-white hover:border-emerald-300 hover:shadow-lg'; ?>">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg group-hover:text-emerald-600 transition-colors">Brosuli Boyolali (Pusat)</h4>
+                                <p class="text-xs text-gray-500 mt-0.5 italic">Pusat Produksi & Distribusi Utama</p>
+                            </div>
+                        </div>
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center transition-all <?php echo 1 === (int)$selected_branch_id ? 'bg-emerald-500 text-white' : 'bg-gray-50 text-gray-300 group-hover:bg-emerald-50 group-hover:text-emerald-500'; ?>">
+                            <i class="fas fa-check text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+
+                <div class="py-2 flex items-center gap-4 text-gray-300">
+                    <div class="h-px flex-1 bg-gray-100"></div>
+                    <span class="text-[10px] font-bold uppercase tracking-widest">Cabang Lainnya</span>
+                    <div class="h-px flex-1 bg-gray-100"></div>
+                </div>
+
+                <?php foreach ($branches as $branch): ?>
+                <?php if ($branch['id'] == 1) continue; ?>
+                <button onclick="selectBranch(<?php echo $branch['id']; ?>, '<?php echo addslashes($branch['name']); ?>')" 
+                    class="w-full text-left p-6 rounded-3xl border-2 transition-all group <?php echo (int)$branch['id'] === (int)$selected_branch_id ? 'border-secondary bg-secondary/5 shadow-md' : 'border-gray-100 bg-white hover:border-secondary/30 hover:shadow-lg'; ?>">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-lg group-hover:text-secondary transition-colors"><?php echo htmlspecialchars($branch['name']); ?></h4>
+                            <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                                <i class="fas fa-location-dot text-gray-300"></i>
+                                <?php echo htmlspecialchars($branch['address']); ?>
+                            </p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center transition-all <?php echo (int)$branch['id'] === (int)$selected_branch_id ? 'bg-secondary text-white' : 'bg-gray-50 text-gray-300 group-hover:bg-secondary/10 group-hover:text-secondary'; ?>">
+                            <i class="fas fa-chevron-right text-xs"></i>
+                        </div>
+                    </div>
+                </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="p-6 bg-gray-50 text-center border-t border-gray-100 flex flex-col gap-2">
+                <?php if ($selected_branch_id): ?>
+                <button onclick="selectBranch('', 'Pilih Cabang')" class="text-xs text-secondary font-bold hover:underline">
+                    <i class="fas fa-undo mr-1"></i> Reset Pilihan / Lihat Semua
+                </button>
+                <?php endif; ?>
+                <p class="text-[10px] text-gray-400">Pilihan cabang akan menyesuaikan ketersediaan stok dan layanan kurir.</p>
+            </div>
+            <div class="p-6 bg-gray-50 text-center border-t border-gray-100">
+                <p class="text-xs text-gray-400">Pilihan cabang akan menyesuaikan ketersediaan stok dan layanan kurir.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const selectedBranchId = <?php echo json_encode($selected_branch_id); ?>;
+
+        function handleAddToCart(product) {
+            // No longer forcing branch selection, default to master if not selected
+            addToCart(product);
+        }
+
+        function selectBranch(id, name) {
+            const formData = new FormData();
+            formData.append('branch_id', id);
+            
+            fetch('api/set_branch.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(() => {
+                location.reload();
+            });
+        }
+    </script>
 </body>
 </html>

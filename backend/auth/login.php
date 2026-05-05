@@ -15,6 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['admin_id'] = $user['id'];
         $_SESSION['admin_username'] = $user['username'];
+        $_SESSION['admin_role'] = $user['role'];
+        $_SESSION['admin_branch_id'] = $user['branch_id'];
         header('Location: ../products/index.php');
         exit();
     } else {

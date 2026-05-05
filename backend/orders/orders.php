@@ -16,8 +16,16 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )");
 
-// Fetch all orders
-$stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC");
+// Fetch orders based on role
+$role = $_SESSION['admin_role'] ?? 'superadmin';
+$branch_id = $_SESSION['admin_branch_id'] ?? null;
+
+if ($role == 'admin_cabang') {
+    $stmt = $pdo->prepare("SELECT * FROM orders WHERE branch_id = ? ORDER BY created_at DESC");
+    $stmt->execute([$branch_id]);
+} else {
+    $stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC");
+}
 $orders = $stmt->fetchAll();
 ?>
 <!DOCTYPE html>

@@ -2,12 +2,23 @@
 CREATE DATABASE IF NOT EXISTS db_brosuli;
 USE db_brosuli;
 
+-- Branches table
+CREATE TABLE IF NOT EXISTS branches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Admin table
 CREATE TABLE IF NOT EXISTS admin (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    role ENUM('superadmin', 'admin_cabang') DEFAULT 'superadmin',
+    branch_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL
 );
 
 -- Categories table
@@ -65,3 +76,40 @@ CREATE TABLE IF NOT EXISTS label_print_queue (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );
+
+-- Orders table
+CREATE TABLE IF NOT EXISTS orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id VARCHAR(50) UNIQUE NOT NULL,
+    customer_name VARCHAR(100),
+    customer_address TEXT,
+    total_amount DECIMAL(15, 2),
+    payment_status VARCHAR(20) DEFAULT 'pending',
+    payment_method VARCHAR(20) DEFAULT 'Midtrans',
+    items_json TEXT,
+    branch_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL
+);
+
+-- Branch Inventory table
+CREATE TABLE IF NOT EXISTS branch_inventory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    branch_id INT NOT NULL,
+    product_id INT NOT NULL,
+    stock INT DEFAULT 0,
+    UNIQUE KEY (branch_id, product_id),
+    FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Initial Branches
+INSERT IGNORE INTO branches (name, address) VALUES 
+('Brosuli Boyolali (Pusat)', 'Jl. Pandanaran No.275, Sidoharjo, Banaran, Kec. Boyolali'),
+('Brosuli Mojosongo', 'Ruko Techno Park, Jl. Merdeka Timur, Mojosongo'),
+('Brosuli Kartasura', 'Jl. Brigjen Katamso, Ngemplak, Kartasura'),
+('Brosuli Baki', 'Jl. Ovensari Raya No.21, Kadilangu, Baki'),
+('Brosuli Mojolaban', 'Jl. Lettu Rm.Hartono No.39, Gadingan, Mojolaban'),
+('Brosuli Colomadu', 'Jl. Adi Sumarmo, Krobyongan, Gawanan'),
+('Brosuli Pedan', 'Jl. Raya Ps. Pedan, Kedungan, Pedan'),
+('Brosuli Jatinom', 'Jl. Klaten-Boyolali No.KM. 8, Bonyokan, Jatinom');

@@ -1,7 +1,11 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 require_once '../../config.php';
 require_once '../../db/db.php';
+
+// Get selected branch from session, default to 1 (Pusat) if none selected
+$branch_id = $_SESSION['user_branch_id'] ?? 1;
 
 // Get JSON data from frontend
 $input = file_get_contents('php://input');
@@ -39,14 +43,15 @@ try {
     $customer_name = $data['customer_name'] ?? 'Pelanggan';
     $customer_phone = $data['customer_phone'] ?? '';
 
-    $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, items_json) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, items_json, branch_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $order_id,
         $customer_name,
         $customer_phone, // We store phone in the address column for now to avoid DB migration
         $total_amount,
         'pending',
-        json_encode($items_for_db)
+        json_encode($items_for_db),
+        $branch_id
     ]);
 } catch (PDOException $e) {
     // If DB fails, we still want to try creating Midtrans transaction

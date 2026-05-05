@@ -22,6 +22,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <span class="font-medium">Kategori</span>
         </a>
         
+        <?php if (($_SESSION['admin_role'] ?? 'superadmin') == 'superadmin'): ?>
         <a href="../content/banners.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'banners.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
             <i class="fas fa-images w-5 text-center"></i>
             <span class="font-medium">Banner</span>
@@ -31,6 +32,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i class="fas fa-star w-5 text-center"></i>
             <span class="font-medium">Best Sellers</span>
         </a>
+        <?php endif; ?>
         
         <a href="../orders/orders.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'orders.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
             <i class="fas fa-shopping-cart w-5 text-center"></i>
@@ -41,6 +43,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <i class="fas fa-cash-register w-5 text-center"></i>
             <span class="font-medium">Kasir (POS)</span>
         </a>
+
+        <?php if (($_SESSION['admin_role'] ?? 'superadmin') == 'superadmin'): ?>
+        <a href="../admins/index.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'admins.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+            <i class="fas fa-user-shield w-5 text-center"></i>
+            <span class="font-medium">Kelola Admin</span>
+        </a>
+        <?php endif; ?>
         
         <div class="pt-6 mt-6 border-t border-white/10">
             <a href="../../frontend/index.php" target="_blank" class="flex items-center space-x-3 p-3 rounded-xl text-amber-100/50 hover:bg-white/5 hover:text-white transition-all">
