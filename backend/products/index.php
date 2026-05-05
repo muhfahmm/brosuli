@@ -77,9 +77,15 @@ if (isset($_GET['delete'])) {
                                     class="w-12 h-12 object-cover rounded-lg border border-gray-200">
                             </td>
                             <td class="px-6 py-4">
-                                <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-mono">
-                                    <?php echo htmlspecialchars($product['barcode'] ?: '-'); ?>
-                                </span>
+                                <?php if ($product['barcode']): ?>
+                                    <div class="flex flex-col items-center">
+                                        <img src="https://barcode.tec-it.com/barcode.ashx?data=<?php echo urlencode($product['barcode']); ?>&code=Code128&dpi=96" 
+                                            class="h-8 mb-1 max-w-[120px]">
+                                        <span class="text-[10px] font-mono text-gray-400"><?php echo htmlspecialchars($product['barcode']); ?></span>
+                                    </div>
+                                <?php else: ?>
+                                    <span class="text-gray-300 text-xs italic">Belum ada</span>
+                                <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($product['name']); ?></td>
                             <td class="px-6 py-4 text-gray-600"><?php echo htmlspecialchars($product['category_name']); ?></td>

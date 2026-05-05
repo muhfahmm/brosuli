@@ -28,10 +28,10 @@ if (isset($_GET['clear'])) {
             .label-page { padding: 0; margin: 0; }
         }
         .label-card {
-            width: 50mm;
-            height: 30mm;
-            border: 1px dashed #ccc;
-            padding: 2mm;
+            width: 70mm;
+            height: 45mm;
+            border: 1px solid #e5e7eb;
+            padding: 4mm;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -39,6 +39,7 @@ if (isset($_GET['clear'])) {
             text-align: center;
             page-break-inside: avoid;
             background: white;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -56,7 +57,7 @@ if (isset($_GET['clear'])) {
         </div>
     </div>
 
-    <div class="label-page flex flex-wrap justify-center gap-4 p-4">
+    <div class="label-page flex flex-wrap justify-start gap-6 p-8">
         <?php if (empty($queue_items)): ?>
             <p class="no-print text-gray-500 py-20 text-center w-full">Antrean kosong. Tambahkan produk dari daftar produk.</p>
         <?php endif; ?>
@@ -64,20 +65,21 @@ if (isset($_GET['clear'])) {
         <?php foreach ($queue_items as $item): ?>
             <?php for ($i = 0; $i < $item['quantity']; $i++): ?>
                 <div class="label-card shadow-sm rounded-lg">
-                    <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Brosuli Bakery</div>
-                    <div class="text-xs font-bold text-gray-800 leading-tight my-1 truncate w-full">
+                    <div class="text-[12px] font-bold text-amber-600 uppercase tracking-widest border-b border-amber-100 pb-1 w-full mb-2">Brosuli Bakery</div>
+                    <div class="text-sm font-bold text-gray-800 leading-tight mb-3">
                         <?php echo htmlspecialchars($item['name']); ?>
                     </div>
                     
                     <?php if ($item['barcode']): ?>
-                        <img src="https://barcode.tec-it.com/barcode.ashx?data=<?php echo urlencode($item['barcode']); ?>&code=Code128&translate-esc=on" 
-                             class="h-8 max-w-full">
-                        <div class="text-[8px] font-mono text-gray-500"><?php echo htmlspecialchars($item['barcode']); ?></div>
+                        <div class="flex-1 flex flex-col justify-center w-full">
+                            <img src="https://barcode.tec-it.com/barcode.ashx?data=<?php echo urlencode($item['barcode']); ?>&code=Code128&hide-text=on" 
+                                 class="h-12 w-full object-contain">
+                        </div>
                     <?php else: ?>
-                        <div class="h-8 flex items-center justify-center text-[8px] text-gray-300 italic border border-gray-100 w-full">Tanpa Barcode</div>
+                        <div class="h-12 flex items-center justify-center text-[10px] text-gray-300 italic border border-gray-100 w-full">Tanpa Barcode</div>
                     <?php endif; ?>
 
-                    <div class="text-sm font-bold text-amber-600 mt-1">
+                    <div class="text-xl font-bold text-[#4A2C2A] mt-2">
                         Rp <?php echo number_format($item['price'], 0, ',', '.'); ?>
                     </div>
                 </div>
