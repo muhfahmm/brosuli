@@ -9,18 +9,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $product_id = $_POST['product_id'] ?? null;
     
     if ($product_id) {
-        // Check if already in queue, if yes increase quantity, else insert
-        $stmt = $pdo->prepare("SELECT id, quantity FROM label_print_queue WHERE product_id = ?");
-        $stmt->execute([$product_id]);
-        $existing = $stmt->fetch();
+        // Check if queue has any product at all
+        $stmt = $pdo->query("SELECT id FROM label_print_queue LIMIT 1");
+        $queued = $stmt->fetch();
         
-        if ($existing) {
-            $stmt = $pdo->prepare("UPDATE label_print_queue SET quantity = quantity + 1 WHERE id = ?");
-            $success = $stmt->execute([$existing['id']]);
-        } else {
-            $stmt = $pdo->prepare("INSERT INTO label_print_queue (product_id) VALUES (?)");
-            $success = $stmt->execute([$product_id]);
+        if ($queued) {
+            echo json_encode(['success' => false, 'message' => 'Antrean sudah berisi produk. Silakan cetak atau kosongkan antrean sebelum menambah produk lain.']);
+            exit();
         }
+
+        // Insert new item
+        $stmt = $pdo->prepare("INSERT INTO label_print_queue (product_id) VALUES (?)");
+        $success = $stmt->execute([$product_id]);
         
         echo json_encode(['success' => $success]);
     } else {

@@ -182,6 +182,8 @@ if (isset($_GET['delete'])) {
             .then(data => {
                 if (data.success) {
                     alert('Produk ditambahkan ke antrean cetak label.');
+                } else {
+                    alert('Gagal: ' + data.message);
                 }
             });
         }
