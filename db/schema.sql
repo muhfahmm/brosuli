@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS products (
     id INT AUTO_INCREMENT PRIMARY KEY,
     category_id INT,
+    barcode VARCHAR(50) UNIQUE,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
@@ -46,5 +47,21 @@ CREATE TABLE IF NOT EXISTS best_sellers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     product_id INT,
     display_order INT DEFAULT 0,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
+-- Scan Queue for Python Integration
+CREATE TABLE IF NOT EXISTS scan_queue (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    barcode VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Label Print Queue
+CREATE TABLE IF NOT EXISTS label_print_queue (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    product_id INT,
+    quantity INT DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
 );

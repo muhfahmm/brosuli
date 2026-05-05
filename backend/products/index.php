@@ -42,6 +42,10 @@ if (isset($_GET['delete'])) {
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
             <h2 class="text-xl font-semibold text-gray-800">Product Management</h2>
             <div class="flex items-center space-x-4">
+                <a href="print_labels.php" class="text-amber-600 hover:text-amber-800 font-semibold flex items-center space-x-2">
+                    <i class="fas fa-print"></i>
+                    <span>Antrean Cetak</span>
+                </a>
                 <span class="text-gray-600">Welcome, <strong><?php echo $_SESSION['admin_username']; ?></strong></span>
                 <button onclick="document.getElementById('addModal').classList.remove('hidden')" 
                     class="bg-amber-600 text-white px-4 py-2 rounded-lg hover:bg-amber-700 transition-colors flex items-center space-x-2 shadow-md">
@@ -58,6 +62,7 @@ if (isset($_GET['delete'])) {
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Image</th>
+                            <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Barcode / QR</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Product Name</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Category</th>
                             <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase">Price</th>
@@ -71,10 +76,18 @@ if (isset($_GET['delete'])) {
                                 <img src="../../<?php echo $product['image_url'] ?: 'https://via.placeholder.com/60'; ?>" 
                                     class="w-12 h-12 object-cover rounded-lg border border-gray-200">
                             </td>
+                            <td class="px-6 py-4">
+                                <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-mono">
+                                    <?php echo htmlspecialchars($product['barcode'] ?: '-'); ?>
+                                </span>
+                            </td>
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($product['name']); ?></td>
                             <td class="px-6 py-4 text-gray-600"><?php echo htmlspecialchars($product['category_name']); ?></td>
                             <td class="px-6 py-4 font-semibold text-amber-600">Rp <?php echo number_format($product['price'], 0, ',', '.'); ?></td>
                             <td class="px-6 py-4 text-right space-x-3">
+                                <button onclick="addToPrintQueue(<?php echo $product['id']; ?>)" class="text-emerald-500 hover:text-emerald-700 transition-colors" title="Print Label">
+                                    <i class="fas fa-print"></i>
+                                </button>
                                 <button onclick="openEditModal(<?php echo $product['id']; ?>)" class="text-blue-500 hover:text-blue-700 transition-colors">
                                     <i class="fas fa-edit"></i>
                                 </button>
@@ -107,9 +120,15 @@ if (isset($_GET['delete'])) {
             </button>
             <h3 class="text-2xl font-bold text-gray-800 mb-6">Add New Product</h3>
             <form action="process_product.php" method="POST" enctype="multipart/form-data" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                    <input type="text" name="name" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" name="name" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Barcode / QR Code</label>
+                        <input type="text" name="barcode" class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500" placeholder="Kosongkan untuk isi otomatis">
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
@@ -146,5 +165,21 @@ if (isset($_GET['delete'])) {
     </div>
     
     <?php include 'product_modals.php'; ?>
+
+    <script>
+        function addToPrintQueue(productId) {
+            fetch('add_to_print_queue.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'product_id=' + productId
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Produk ditambahkan ke antrean cetak label.');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

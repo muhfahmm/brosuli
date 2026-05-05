@@ -20,12 +20,16 @@ $categories = $cat_stmt->fetchAll();
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
         body { font-family: 'Outfit', sans-serif; background-color: #FDFCF6; }
         .product-card:hover .add-btn { transform: translateY(0); opacity: 1; }
         .add-btn { transform: translateY(10px); opacity: 0; transition: all 0.3s ease; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .focus-lock { border-color: #D97706 !important; box-shadow: 0 0 0 4px rgba(217, 119, 6, 0.1) !important; }
+        .lock-indicator { animation: pulse-orange 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse-orange { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body class="min-h-screen flex">
@@ -41,6 +45,15 @@ $categories = $cat_stmt->fetchAll();
                     <p class="text-gray-500">Pilih produk untuk pesanan baru</p>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <div class="relative group">
+                        <i id="lockIcon" class="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 lock-indicator"></i>
+                        <input type="text" id="barcodeScanner" placeholder="Scanner Locked..." autofocus
+                            class="pl-12 pr-6 py-3 bg-amber-50 border-2 border-amber-200 rounded-2xl outline-none focus:ring-0 w-48 shadow-sm text-amber-900 font-bold placeholder:text-amber-300 focus-lock transition-all"
+                            onblur="setTimeout(() => this.focus(), 10)">
+                    </div>
+                    <button onclick="toggleCameraScanner()" class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center hover:bg-amber-200 transition-all shadow-sm" title="Gunakan Kamera">
+                        <i class="fas fa-camera text-xl"></i>
+                    </button>
                     <div class="relative">
                         <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                         <input type="text" id="productSearch" placeholder="Cari roti..." 
@@ -175,6 +188,27 @@ $categories = $cat_stmt->fetchAll();
         </div>
     </div>
 
+    <!-- Camera Scanner Modal -->
+    <div id="cameraModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center p-4 z-[150] backdrop-blur-md">
+        <div class="bg-white rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl relative">
+            <button onclick="toggleCameraScanner()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 z-10">
+                <i class="fas fa-times text-2xl"></i>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800">Scan Barcode / QR Code</h3>
+                <p class="text-sm text-gray-500">Arahkan kode ke kotak kamera</p>
+            </div>
+            <div id="reader" class="rounded-3xl overflow-hidden border-4 border-amber-50 bg-gray-900 aspect-square"></div>
+            <div class="mt-6 flex flex-col items-center space-y-4">
+                <button id="torchBtn" onclick="toggleTorch()" class="hidden bg-amber-500 text-white px-6 py-2 rounded-full font-bold hover:bg-amber-600 transition-all flex items-center space-x-2">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Nyalakan Senter</span>
+                </button>
+                <p id="scannerStatus" class="text-amber-600 font-medium animate-pulse">Menunggu kamera...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center p-4 z-[110] backdrop-blur-sm">
         <div class="bg-white rounded-[2.5rem] max-w-sm w-full p-10 shadow-2xl text-center">
@@ -196,6 +230,9 @@ $categories = $cat_stmt->fetchAll();
     </div>
 
     <script>
+        const allProducts = <?php echo json_encode($products); ?>;
+        let html5QrCode = null;
+        let isTorchOn = false;
         let cart = [];
 
         function addToCart(product) {
@@ -212,6 +249,10 @@ $categories = $cat_stmt->fetchAll();
                 });
             }
             renderCart();
+            
+            // Audio Feedback
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3');
+            audio.play().catch(e => {});
         }
 
         function updateQty(id, delta) {
@@ -290,6 +331,156 @@ $categories = $cat_stmt->fetchAll();
             document.getElementById('modalTotal').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(total);
         }
 
+        // Camera Scanner Logic
+        async function toggleCameraScanner() {
+            const modal = document.getElementById('cameraModal');
+            const isHidden = modal.classList.contains('hidden');
+            
+            if (isHidden) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                startScanner();
+            } else {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                stopScanner();
+            }
+        }
+
+        async function startScanner() {
+            html5QrCode = new Html5Qrcode("reader");
+            const config = { fps: 15, qrbox: { width: 300, height: 300 } };
+            
+            try {
+                await html5QrCode.start(
+                    { facingMode: "environment" }, 
+                    config,
+                    (decodedText) => {
+                        const product = allProducts.find(p => p.barcode === decodedText);
+                        if (product) {
+                            addToCart(product);
+                            document.getElementById('scannerStatus').innerText = "Berhasil: " + product.name;
+                            document.getElementById('scannerStatus').classList.replace('text-amber-600', 'text-emerald-600');
+                            
+                            setTimeout(() => {
+                                document.getElementById('scannerStatus').innerText = "Kamera Aktif! Arahkan barcode berikutnya...";
+                                document.getElementById('scannerStatus').classList.replace('text-emerald-600', 'text-amber-600');
+                            }, 2000);
+                        } else {
+                            document.getElementById('scannerStatus').innerText = "Barcode tidak terdaftar: " + decodedText;
+                            document.getElementById('scannerStatus').classList.replace('text-amber-600', 'text-rose-600');
+                            setTimeout(() => {
+                                document.getElementById('scannerStatus').innerText = "Kamera Aktif! Arahkan barcode berikutnya...";
+                                document.getElementById('scannerStatus').classList.replace('text-rose-600', 'text-amber-600');
+                            }, 2000);
+                        }
+                    }
+                );
+
+                document.getElementById('scannerStatus').innerText = "Kamera Aktif! Arahkan kode ke kotak di atas";
+                document.getElementById('scannerStatus').classList.remove('animate-pulse');
+
+                // Check if flashlight is supported
+                const cameraCapabilities = html5QrCode.getRunningTrackCapabilities();
+                if (cameraCapabilities.torch) {
+                    document.getElementById('torchBtn').classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('scannerStatus').innerText = "Gagal mengakses kamera.";
+            }
+        }
+
+        async function toggleTorch() {
+            isTorchOn = !isTorchOn;
+            try {
+                await html5QrCode.applyVideoConstraints({
+                    advanced: [{ torch: isTorchOn }]
+                });
+                const btn = document.getElementById('torchBtn');
+                btn.innerHTML = isTorchOn ? '<i class="fas fa-lightbulb"></i> Matikan Senter' : '<i class="fas fa-lightbulb"></i> Nyalakan Senter';
+                btn.classList.toggle('bg-amber-600', isTorchOn);
+            } catch (err) {
+                console.error("Torch error:", err);
+            }
+        }
+
+        async function stopScanner() {
+            if (html5QrCode) {
+                await html5QrCode.stop();
+                html5QrCode = null;
+            }
+        }
+
+        // Barcode Scanner Logic
+        const barcodeInput = document.getElementById('barcodeScanner');
+        
+        // Prevent manual typing if desired, or just keep it focused
+        barcodeInput.addEventListener('keydown', function(e) {
+            // Optional: prevent backspace/delete to keep it clean, but Enter is essential
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Prevent form submission if any
+            }
+        });
+
+        barcodeInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const barcode = this.value.trim();
+                if (barcode) {
+                    const product = allProducts.find(p => p.barcode === barcode);
+                    if (product) {
+                        addToCart(product);
+                        // Visual feedback
+                        this.classList.add('bg-emerald-100');
+                        document.getElementById('lockIcon').classList.replace('text-amber-600', 'text-emerald-600');
+                        setTimeout(() => {
+                            this.classList.remove('bg-emerald-100');
+                            document.getElementById('lockIcon').classList.replace('text-emerald-600', 'text-amber-600');
+                        }, 500);
+                    } else {
+                        // Error feedback
+                        this.classList.add('bg-rose-100');
+                        document.getElementById('lockIcon').classList.replace('text-amber-600', 'text-rose-600');
+                        setTimeout(() => {
+                            this.classList.remove('bg-rose-100');
+                            document.getElementById('lockIcon').classList.replace('text-rose-600', 'text-amber-600');
+                        }, 500);
+                    }
+                    this.value = ''; // Clear for next scan
+                }
+            }
+        });
+
+        // Global key listener to catch scanner input even if focus is lost (safety net)
+        document.addEventListener('keydown', function(e) {
+            // If user starts typing elsewhere, we force focus back unless they are in search
+            if (document.activeElement.id !== 'barcodeScanner' && 
+                document.activeElement.id !== 'productSearch' && 
+                document.activeElement.tagName !== 'INPUT' && 
+                document.activeElement.tagName !== 'TEXTAREA') {
+                barcodeInput.focus();
+            }
+        });
+
+        // Polling for Python AI Scanner
+        setInterval(() => {
+            fetch('check_scans.php')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.barcode) {
+                        const product = allProducts.find(p => p.barcode === data.barcode);
+                        if (product) {
+                            addToCart(product);
+                            // Visual feedback on the lock icon
+                            const lockIcon = document.getElementById('lockIcon');
+                            lockIcon.classList.replace('text-amber-600', 'text-emerald-600');
+                            setTimeout(() => lockIcon.classList.replace('text-emerald-600', 'text-amber-600'), 1000);
+                        }
+                    }
+                })
+                .catch(err => console.error("Polling error:", err));
+        }, 500);
+
         // Search & Filter
         document.getElementById('productSearch').addEventListener('input', function(e) {
             const term = e.target.value.toLowerCase();
@@ -335,6 +526,7 @@ $categories = $cat_stmt->fetchAll();
         function closeCheckoutModal() {
             document.getElementById('checkoutModal').classList.add('hidden');
             document.getElementById('checkoutModal').classList.remove('flex');
+            // Focus will be handled by the onblur lock
         }
 
         // Form Submit

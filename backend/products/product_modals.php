@@ -7,9 +7,15 @@
         <h3 class="text-2xl font-bold text-gray-800 mb-6">Edit Product</h3>
         <form action="process_product.php" method="POST" enctype="multipart/form-data" class="space-y-4">
             <input type="hidden" name="id" id="edit_id">
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                <input type="text" name="name" id="edit_name" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                    <input type="text" name="name" id="edit_name" required class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Barcode / QR</label>
+                    <input type="text" name="barcode" id="edit_barcode" class="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
@@ -71,6 +77,7 @@ function openEditModal(id) {
         .then(data => {
             document.getElementById('edit_id').value = data.id;
             document.getElementById('edit_name').value = data.name;
+            document.getElementById('edit_barcode').value = data.barcode || '';
             document.getElementById('edit_category_id').value = data.category_id;
             document.getElementById('edit_price').value = data.price;
             document.getElementById('edit_description').value = data.description;
@@ -81,6 +88,8 @@ function openEditModal(id) {
 
 function closeEditModal() {
     document.getElementById('editModal').classList.add('hidden');
+    const scanner = document.getElementById('barcodeScanner');
+    if (scanner) scanner.focus();
 }
 
 function openDeleteModal(id) {
@@ -90,5 +99,7 @@ function openDeleteModal(id) {
 
 function closeDeleteModal() {
     document.getElementById('deleteModal').classList.add('hidden');
+    const scanner = document.getElementById('barcodeScanner');
+    if (scanner) scanner.focus();
 }
 </script>

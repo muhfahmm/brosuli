@@ -6,6 +6,13 @@ requireLogin();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'] ?? null;
     $name = $_POST['name'] ?? '';
+    $barcode = $_POST['barcode'] ?? null;
+    
+    // Auto-generate barcode if empty
+    if (empty($barcode)) {
+        $barcode = 'BSL' . time() . str_pad(rand(0, 999), 3, '0', STR_PAD_LEFT);
+    }
+
     $category_id = !empty($_POST['category_id']) ? $_POST['category_id'] : null;
     $price = $_POST['price'] ?? 0;
     $description = $_POST['description'] ?? '';
@@ -28,16 +35,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id) {
         // Update
         if ($image_url) {
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, category_id = ?, price = ?, description = ?, image_url = ?, is_featured = ? WHERE id = ?");
-            $stmt->execute([$name, $category_id, $price, $description, $image_url, $is_featured, $id]);
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, image_url = ?, is_featured = ? WHERE id = ?");
+            $stmt->execute([$name, $barcode, $category_id, $price, $description, $image_url, $is_featured, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, category_id = ?, price = ?, description = ?, is_featured = ? WHERE id = ?");
-            $stmt->execute([$name, $category_id, $price, $description, $is_featured, $id]);
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, is_featured = ? WHERE id = ?");
+            $stmt->execute([$name, $barcode, $category_id, $price, $description, $is_featured, $id]);
         }
     } else {
         // Create
-        $stmt = $pdo->prepare("INSERT INTO products (name, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $category_id, $price, $description, $image_url ?: '', $is_featured]);
+        $stmt = $pdo->prepare("INSERT INTO products (name, barcode, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$name, $barcode, $category_id, $price, $description, $image_url ?: '', $is_featured]);
     }
 
     header('Location: index.php');
