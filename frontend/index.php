@@ -236,10 +236,6 @@ $banners = $banner_stmt->fetchAll();
         </div>
     </section>
 
-
-
-
-
     <!-- Footer -->
     <footer id="contact" class="bg-white pt-24 pb-12 border-t border-amber-50">
         <div class="max-w-7xl mx-auto px-6">

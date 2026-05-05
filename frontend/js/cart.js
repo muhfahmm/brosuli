@@ -1,5 +1,8 @@
 // Cart Management System
 let cart = JSON.parse(localStorage.getItem('brosuli_cart')) || [];
+// Filter out soft-deleted items on page load so they "disappear" on refresh
+cart = cart.filter(item => !item.isDeleted);
+
 let removedItemIds = JSON.parse(localStorage.getItem('brosuli_removed_ids')) || [];
 let isPaid = false; // Payment status flag
 
@@ -27,12 +30,13 @@ function addToCart(product) {
 }
 
 function removeFromCart(id) {
-    const item = cart.find(item => item.id === id);
-    if (item) {
-        item.isDeleted = true;
+    const index = cart.findIndex(item => item.id === id);
+    if (index !== -1) {
+        const item = cart[index];
         if (!removedItemIds.includes(id)) {
             removedItemIds.push(id);
         }
+        cart.splice(index, 1); // Remove completely from array
         showToast(`Produk "${item.name}" telah dihapus.`);
     }
     isPaid = false; // Reset payment status if cart changes
@@ -54,7 +58,8 @@ function updateQuantity(id, delta) {
 
 function updateCartUI() {
     const cartCount = document.querySelectorAll('.cart-count');
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    // Only count active (non-deleted) items
+    const totalItems = cart.filter(item => !item.isDeleted).reduce((sum, item) => sum + item.quantity, 0);
     cartCount.forEach(el => el.textContent = totalItems);
 
     const cartItemsList = document.getElementById('cart-items-list');
