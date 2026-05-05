@@ -183,9 +183,15 @@ $categories = $cat_stmt->fetchAll();
             </div>
             <h3 class="text-2xl font-bold text-gray-800 mb-2">Transaksi Berhasil!</h3>
             <p class="text-gray-500 mb-8">Pesanan telah disimpan ke dalam sistem.</p>
-            <button onclick="window.location.reload()" class="w-full bg-[#4A2C2A] text-white py-4 rounded-2xl font-bold shadow-lg">
-                Kembali ke Kasir
-            </button>
+            <div class="space-y-3">
+                <button id="printReceiptBtn" class="w-full bg-emerald-600 text-white py-4 rounded-2xl font-bold shadow-lg hover:bg-emerald-700 transition-all flex items-center justify-center space-x-2">
+                    <i class="fas fa-print"></i>
+                    <span>Cetak Struk</span>
+                </button>
+                <button onclick="window.location.reload()" class="w-full bg-gray-100 text-gray-600 py-4 rounded-2xl font-bold hover:bg-gray-200 transition-all">
+                    Kembali ke Kasir
+                </button>
+            </div>
         </div>
     </div>
 
@@ -351,6 +357,10 @@ $categories = $cat_stmt->fetchAll();
             .then(data => {
                 if (data.success) {
                     closeCheckoutModal();
+                    // Set print action
+                    document.getElementById('printReceiptBtn').onclick = () => {
+                        window.open('receipt.php?order_id=' + data.order_id, '_blank');
+                    };
                     document.getElementById('successModal').classList.remove('hidden');
                     document.getElementById('successModal').classList.add('flex');
                 } else {
