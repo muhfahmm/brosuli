@@ -66,6 +66,7 @@ function updateCartUI() {
             cartItemsList.innerHTML = '<div class="text-center py-10 text-gray-400">Keranjang masih kosong.</div>';
             cartTotalEl.textContent = 'Rp 0';
         } else {
+            let total = 0;
             cartItemsList.innerHTML = cart.map(item => {
                 const subtotal = item.price * item.quantity;
                 if (!item.isDeleted) total += subtotal;
