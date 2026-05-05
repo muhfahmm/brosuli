@@ -77,11 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($cat['name']); ?></td>
                             <td class="px-6 py-4 text-gray-500 text-sm italic"><?php echo htmlspecialchars($cat['description'] ?: '-'); ?></td>
                             <td class="px-6 py-4 text-right">
-                                <a href="?delete=<?php echo $cat['id']; ?>" 
-                                    onclick="return confirm('Delete this category?')"
+                                <button onclick="deleteCategory(<?php echo $cat['id']; ?>)" 
                                     class="text-red-400 hover:text-red-600 transition-colors">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </button>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -111,5 +110,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
             </form>
         </div>
     </div>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
+
+    <script>
+    function deleteCategory(id) {
+        showConfirm(
+            'Hapus Kategori?', 
+            'Seluruh produk dalam kategori ini mungkin akan terpengaruh. Lanjutkan?', 
+            function() {
+                window.location.href = '?delete=' + id;
+            }
+        );
+    }
+    </script>
 </body>
 </html>

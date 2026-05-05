@@ -70,7 +70,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_banner'])) {
                     <div class="relative h-48 overflow-hidden">
                         <img src="../../<?php echo $banner['image_url']; ?>" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
-                            <a href="?delete=<?php echo $banner['id']; ?>" onclick="return confirm('Delete banner?')" class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600"><i class="fas fa-trash"></i></a>
+                            <button onclick="deleteBanner(<?php echo $banner['id']; ?>)" class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="p-6">
@@ -118,5 +120,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_banner'])) {
             </form>
         </div>
     </div>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
+
+    <script>
+    function deleteBanner(id) {
+        showConfirm(
+            'Hapus Banner?', 
+            'Banner ini akan segera dihapus dari halaman depan. Lanjutkan?', 
+            function() {
+                window.location.href = '?delete=' + id;
+            }
+        );
+    }
+    </script>
 </body>
 </html>

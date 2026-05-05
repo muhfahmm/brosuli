@@ -82,9 +82,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
                             <td class="px-6 py-4 text-gray-500"><?php echo htmlspecialchars($bs['category_name']); ?></td>
                             <td class="px-6 py-4 text-gray-500"><?php echo $bs['display_order']; ?></td>
                             <td class="px-6 py-4 text-right">
-                                <a href="?delete=<?php echo $bs['id']; ?>" onclick="return confirm('Remove from best sellers?')" class="text-red-400 hover:text-red-600">
+                                <button onclick="removeBestSeller(<?php echo $bs['id']; ?>)" class="text-red-400 hover:text-red-600 transition-colors">
                                     <i class="fas fa-trash"></i>
-                                </a>
+                                </button>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -124,5 +124,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
             </form>
         </div>
     </div>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
+
+    <script>
+    function removeBestSeller(id) {
+        showConfirm(
+            'Hapus dari Best Seller?', 
+            'Produk ini tidak akan lagi muncul di bagian produk terlaris. Lanjutkan?', 
+            function() {
+                window.location.href = '?delete=' + id;
+            }
+        );
+    }
+    </script>
 </body>
 </html>
