@@ -1,13 +1,20 @@
 // Cart Management System
 let cart = JSON.parse(localStorage.getItem('brosuli_cart')) || [];
+let removedItemIds = JSON.parse(localStorage.getItem('brosuli_removed_ids')) || [];
 let isPaid = false; // Payment status flag
 
 function saveCart() {
     localStorage.setItem('brosuli_cart', JSON.stringify(cart));
+    localStorage.setItem('brosuli_removed_ids', JSON.stringify(removedItemIds));
     updateCartUI();
 }
 
 function addToCart(product) {
+    if (removedItemIds.includes(product.id)) {
+        showToast(`❌ ${product.name} telah dihapus dan tidak dapat ditambahkan lagi.`);
+        return;
+    }
+    
     const existingItem = cart.find(item => item.id === product.id);
     if (existingItem) {
         existingItem.quantity += 1;
@@ -20,7 +27,14 @@ function addToCart(product) {
 }
 
 function removeFromCart(id) {
-    cart = cart.filter(item => item.id !== id);
+    const item = cart.find(item => item.id === id);
+    if (item) {
+        item.isDeleted = true;
+        if (!removedItemIds.includes(id)) {
+            removedItemIds.push(id);
+        }
+        showToast(`Produk "${item.name}" telah dihapus.`);
+    }
     isPaid = false; // Reset payment status if cart changes
     saveCart();
 }
@@ -52,29 +66,37 @@ function updateCartUI() {
             cartItemsList.innerHTML = '<div class="text-center py-10 text-gray-400">Keranjang masih kosong.</div>';
             cartTotalEl.textContent = 'Rp 0';
         } else {
-            let total = 0;
             cartItemsList.innerHTML = cart.map(item => {
                 const subtotal = item.price * item.quantity;
-                total += subtotal;
+                if (!item.isDeleted) total += subtotal;
+
                 return `
-                    <div class="flex items-center space-x-4 p-4 bg-cream/30 rounded-2xl border border-amber-50">
-                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl shadow-sm">
+                    <div class="flex items-center space-x-4 p-4 ${item.isDeleted ? 'bg-gray-100 opacity-60' : 'bg-cream/30 border-amber-50'} rounded-2xl border">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl shadow-sm ${item.isDeleted ? 'grayscale' : ''}">
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm text-primary">${item.name}</h4>
-                            <p class="text-xs text-amber-600 font-bold">Rp ${Number(item.price).toLocaleString('id-ID')}</p>
-                            <div class="flex items-center space-x-3 mt-2">
-                                <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                                    <i class="fas fa-minus text-[10px]"></i>
-                                </button>
-                                <span class="text-sm font-bold">${item.quantity}</span>
-                                <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                                    <i class="fas fa-plus text-[10px]"></i>
-                                </button>
-                            </div>
+                            <h4 class="font-bold text-sm ${item.isDeleted ? 'text-gray-400' : 'text-primary'}">${item.name}</h4>
+                            <p class="text-xs ${item.isDeleted ? 'text-gray-400' : 'text-amber-600 font-bold'}">
+                                ${item.isDeleted ? 'Produk telah dihapus' : `Rp ${Number(item.price).toLocaleString('id-ID')}`}
+                            </p>
+                            ${!item.isDeleted ? `
+                                <div class="flex items-center space-x-3 mt-2">
+                                    <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                        <i class="fas fa-minus text-[10px]"></i>
+                                    </button>
+                                    <span class="text-sm font-bold">${item.quantity}</span>
+                                    <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                        <i class="fas fa-plus text-[10px]"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
                         </div>
-                        <button onclick="removeFromCart(${item.id})" class="text-gray-300 hover:text-red-500 transition-colors">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                        ${!item.isDeleted ? `
+                            <button onclick="removeFromCart(${item.id})" class="text-gray-300 hover:text-red-500 transition-colors">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        ` : `
+                            <i class="fas fa-info-circle text-gray-300"></i>
+                        `}
                     </div>
                 `;
             }).join('');
@@ -105,7 +127,8 @@ function showToast(message) {
 }
 
 function payWithMidtrans() {
-    if (cart.length === 0) {
+    const activeItems = cart.filter(item => !item.isDeleted);
+    if (activeItems.length === 0) {
         showToast('Keranjang Anda masih kosong!');
         return;
     }
@@ -119,7 +142,7 @@ function payWithMidtrans() {
     }
 
     const orderData = {
-        items: cart,
+        items: activeItems,
         customer_name: customerName,
         customer_phone: customerPhone
     };
