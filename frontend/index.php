@@ -22,10 +22,9 @@ if (empty($best_sellers)) {
 $cat_stmt = $pdo->query("SELECT * FROM categories");
 $categories = $cat_stmt->fetchAll();
 
-// Fetch latest active banner for hero
-$banner_stmt = $pdo->query("SELECT * FROM banners WHERE is_active = 1 ORDER BY created_at DESC LIMIT 1");
-$hero_banner = $banner_stmt->fetch();
-$hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or local placeholder if no banner
+// Fetch active banners for hero slider
+$banner_stmt = $pdo->query("SELECT * FROM banners WHERE is_active = 1 ORDER BY created_at DESC");
+$banners = $banner_stmt->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
@@ -37,6 +36,8 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="js/cart.js?v=1.1" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="<?php echo MIDTRANS_CLIENT_KEY; ?>"></script>
     <script>
         tailwind.config = {
@@ -62,10 +63,16 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        .hero-gradient {
-            background: linear-gradient(to bottom, rgba(74, 44, 42, 0.4), rgba(74, 44, 42, 0.8))<?php echo $hero_image ? ", url('$hero_image')" : ""; ?>;
+        .hero-slide {
             background-size: cover;
             background-position: center;
+            position: relative;
+        }
+        .hero-slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(74, 44, 42, 0.3), rgba(74, 44, 42, 0.8));
         }
     </style>
 </head>
@@ -94,35 +101,65 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="relative h-screen flex items-center justify-center hero-gradient text-white pt-16">
-        <div class="text-center px-6 max-w-4xl animate-fade-in-up">
-            <h1 class="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight">
-                <?php echo $hero_banner ? $hero_banner['title'] : ''; ?>
-            </h1>
-            <p class="text-lg md:text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light leading-relaxed">
-                <?php echo $hero_banner ? nl2br(htmlspecialchars($hero_banner['subtitle'])) : ''; ?>
-            </p>
-            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                <a href="catalog.php" class="w-full sm:w-auto bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all shadow-xl hover:shadow-secondary/50">
-                    Jelajahi Menu
-                </a>
+    <!-- Hero Section with Swiper -->
+    <section id="home" class="relative h-[85vh] md:h-screen pt-16 overflow-hidden">
+        <div class="swiper heroSwiper h-full w-full">
+            <div class="swiper-wrapper">
+                <?php foreach ($banners as $banner): ?>
+                <div class="swiper-slide hero-slide flex items-center justify-center text-white" 
+                     style="background-image: url('../<?php echo $banner['image_url']; ?>');">
+                    <div class="relative text-center px-6 max-w-4xl z-10">
+                        <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight drop-shadow-lg">
+                            <?php echo htmlspecialchars($banner['title']); ?>
+                        </h1>
+                        <p class="text-base md:text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
+                            <?php echo nl2br(htmlspecialchars($banner['subtitle'])); ?>
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                            <a href="catalog.php" class="w-full sm:w-auto bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all shadow-xl hover:shadow-secondary/50">
+                                Jelajahi Menu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+                
+                <?php if (empty($banners)): ?>
+                <div class="swiper-slide hero-slide flex items-center justify-center text-white bg-primary">
+                    <div class="relative text-center px-6 max-w-4xl z-10">
+                        <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight">Selamat Datang di Brosuli</h1>
+                        <p class="text-base md:text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light leading-relaxed">Pengalaman Bakery Otentik Sejak 2009</p>
+                        <a href="catalog.php" class="bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all">Jelajahi Menu</a>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
+            
+            <?php if (count($banners) > 1): ?>
+                <div class="swiper-pagination !bottom-10"></div>
+                <div class="swiper-button-next !text-white !right-10 hidden md:flex !w-14 !h-14 !bg-white/10 !backdrop-blur-md !rounded-full hover:!bg-white/20 transition-all after:!content-['']">
+                    <i class="fas fa-chevron-right text-xl"></i>
+                </div>
+                <div class="swiper-button-prev !text-white !left-10 hidden md:flex !w-14 !h-14 !bg-white/10 !backdrop-blur-md !rounded-full hover:!bg-white/20 transition-all after:!content-['']">
+                    <i class="fas fa-chevron-left text-xl"></i>
+                </div>
+            <?php endif; ?>
         </div>
-        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce opacity-60">
-            <i class="fas fa-chevron-down text-2xl"></i>
+        
+        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 animate-bounce opacity-60 z-20 text-white">
+            <i class="fas fa-chevron-down text-xl"></i>
         </div>
     </section>
 
     <!-- Categories Section -->
-    <section class="py-24 bg-white">
+    <section id="categories" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 category-header">
                 <span class="text-secondary font-bold tracking-widest uppercase text-sm">Spesialisasi Kami</span>
                 <h2 class="text-4xl md:text-5xl font-serif font-bold mt-2">Dipanggang dengan Kasih Sayang</h2>
             </div>
             
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 category-grid">
                 <?php
                 $cat_icons = [
                     'Roti' => 'fa-bread-slice',
@@ -148,7 +185,7 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
     <!-- Featured Products -->
     <section id="products" class="py-24">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 product-header">
                 <div>
                     <span class="text-secondary font-bold tracking-widest uppercase text-sm">Terlaris</span>
                     <h2 class="text-4xl md:text-5xl font-serif font-bold mt-2 text-primary">Kreasi Unggulan</h2>
@@ -159,7 +196,7 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 product-grid">
                 <?php if (!empty($best_sellers)): ?>
                     <?php foreach ($best_sellers as $product): ?>
                     <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group border border-amber-50">
@@ -227,7 +264,7 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
                     <ul class="space-y-4 text-gray-500">
                         <li><a href="index.php#home" class="hover:text-secondary transition-colors">Beranda</a></li>
                         <li><a href="catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a></li>
-                        <li><a href="#" class="hover:text-secondary transition-colors">Lokasi</a></li>
+                        <li><a href="location.php" class="hover:text-secondary transition-colors">Lokasi</a></li>
                     </ul>
                 </div>
                 
@@ -236,7 +273,6 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
                     <ul class="space-y-4 text-gray-500">
                         <li class="flex justify-between"><span>Sen - Jum</span> <span>07:00 - 20:00</span></li>
                         <li class="flex justify-between"><span>Sab - Min</span> <span>08:00 - 21:00</span></li>
-                        <li class="flex justify-between text-secondary"><span>Bakery Segar</span> <span>Setiap Hari</span></li>
                     </ul>
                 </div>
                 
@@ -323,6 +359,29 @@ $hero_image = $hero_banner ? '../' . $hero_banner['image_url'] : ''; // Empty or
                 nav.classList.remove('py-2', 'shadow-xl');
             }
         });
+
+        // Initialize Swiper Hero Slider
+        if (document.querySelector('.heroSwiper')) {
+            const swiper = new Swiper('.heroSwiper', {
+                loop: true,
+                autoplay: {
+                    delay: 5000,
+                    disableOnInteraction: false,
+                },
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                effect: 'fade',
+                fadeEffect: {
+                    crossFade: true
+                }
+            });
+        }
     </script>
 </body>
 </html>
