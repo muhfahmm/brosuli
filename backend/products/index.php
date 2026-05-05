@@ -78,13 +78,12 @@ if (isset($_GET['delete'])) {
                             </td>
                             <td class="px-6 py-4">
                                 <?php if ($product['barcode']): ?>
-                                    <div class="flex flex-col items-center">
-                                        <img src="https://barcode.tec-it.com/barcode.ashx?data=<?php echo urlencode($product['barcode']); ?>&code=Code128&dpi=96" 
-                                            class="h-8 mb-1 max-w-[120px]">
-                                        <span class="text-[10px] font-mono text-gray-400"><?php echo htmlspecialchars($product['barcode']); ?></span>
+                                    <div class="flex justify-center">
+                                        <img src="https://barcode.tec-it.com/barcode.ashx?data=<?php echo urlencode($product['barcode']); ?>&code=Code128&dpi=96&hide-text=on" 
+                                            class="h-10 max-w-[150px] object-contain" title="<?php echo htmlspecialchars($product['barcode']); ?>">
                                     </div>
                                 <?php else: ?>
-                                    <span class="text-gray-300 text-xs italic">Belum ada</span>
+                                    <div class="text-center text-gray-300 text-xs italic">Belum ada</div>
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 font-medium text-gray-800"><?php echo htmlspecialchars($product['name']); ?></td>
