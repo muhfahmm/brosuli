@@ -74,35 +74,29 @@ function updateCartUI() {
             let total = 0;
             cartItemsList.innerHTML = cart.map(item => {
                 const subtotal = item.price * item.quantity;
-                if (!item.isDeleted) total += subtotal;
+                total += subtotal;
 
                 return `
-                    <div class="flex items-center space-x-4 p-4 ${item.isDeleted ? 'bg-gray-100 opacity-60' : 'bg-cream/30 border-amber-50'} rounded-2xl border">
-                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl shadow-sm ${item.isDeleted ? 'grayscale' : ''}">
+                    <div class="flex items-center space-x-4 p-4 bg-cream/30 border-amber-50 rounded-2xl border">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-xl shadow-sm">
                         <div class="flex-1">
-                            <h4 class="font-bold text-sm ${item.isDeleted ? 'text-gray-400' : 'text-primary'}">${item.name}</h4>
-                            <p class="text-xs ${item.isDeleted ? 'text-gray-400' : 'text-amber-600 font-bold'}">
-                                ${item.isDeleted ? 'Produk telah dihapus' : `Rp ${Number(item.price).toLocaleString('id-ID')}`}
+                            <h4 class="font-bold text-sm text-primary">${item.name}</h4>
+                            <p class="text-xs text-amber-600 font-bold">
+                                Rp ${Number(item.price).toLocaleString('id-ID')}
                             </p>
-                            ${!item.isDeleted ? `
-                                <div class="flex items-center space-x-3 mt-2">
-                                    <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                                        <i class="fas fa-minus text-[10px]"></i>
-                                    </button>
-                                    <span class="text-sm font-bold">${item.quantity}</span>
-                                    <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                                        <i class="fas fa-plus text-[10px]"></i>
-                                    </button>
-                                </div>
-                            ` : ''}
+                            <div class="flex items-center space-x-3 mt-2">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                    <i class="fas fa-minus text-[10px]"></i>
+                                </button>
+                                <span class="text-sm font-bold">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-6 h-6 rounded-full border border-primary/20 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
+                                    <i class="fas fa-plus text-[10px]"></i>
+                                </button>
+                            </div>
                         </div>
-                        ${!item.isDeleted ? `
-                            <button onclick="removeFromCart(${item.id})" class="text-gray-300 hover:text-red-500 transition-colors">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        ` : `
-                            <i class="fas fa-info-circle text-gray-300"></i>
-                        `}
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-300 hover:text-red-500 transition-colors">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 `;
             }).join('');

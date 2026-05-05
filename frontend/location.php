@@ -96,8 +96,63 @@ $branches = [
                 <a href="index.php" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
             </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="document.getElementById('cart-sidebar').classList.remove('translate-x-full')" class="relative p-2 text-primary hover:text-secondary transition-colors">
+                    <i class="fas fa-shopping-bag text-2xl"></i>
+                    <span class="cart-count absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
+                </button>
+                <button onclick="location.href='catalog.php'" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md transform hover:scale-105 hidden sm:block">
+                    Pesan Sekarang
+                </button>
+            </div>
         </div>
     </nav>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-[450px] bg-white z-[100] shadow-2xl transform translate-x-full transition-transform duration-500 flex flex-col">
+        <div class="p-8 bg-primary text-white flex justify-between items-center">
+            <div>
+                <h3 class="text-xl font-bold font-serif">Keranjang Saya</h3>
+                <p class="text-xs opacity-70"><span class="cart-count">0</span> Produk Terpilih</p>
+            </div>
+            <button onclick="document.getElementById('cart-sidebar').classList.add('translate-x-full')" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items-list" class="flex-1 overflow-y-auto p-6 space-y-6">
+            <!-- Items populated by JS -->
+        </div>
+
+        <!-- Customer Info Section -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 space-y-3">
+            <div class="relative">
+                <input type="text" id="customer-name" placeholder="Nama Anda" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
+                <i class="fas fa-user absolute right-4 top-3 text-gray-300 text-xs"></i>
+            </div>
+            <div class="relative">
+                <input type="tel" id="customer-phone" placeholder="Nomor WhatsApp" class="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-secondary transition-all">
+                <i class="fas fa-phone absolute right-4 top-3 text-gray-300 text-xs"></i>
+            </div>
+        </div>
+        
+        <div class="p-8 bg-white border-t border-gray-100 space-y-3">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-gray-500 font-medium">Total Pembayaran:</span>
+                <span id="cart-total-price" class="text-2xl font-bold text-primary">Rp 0</span>
+            </div>
+            <button onclick="payWithMidtrans()" class="w-full bg-primary text-white py-4 rounded-2xl font-bold text-lg hover:bg-secondary transition-all shadow-xl flex items-center justify-center space-x-3">
+                <i class="fas fa-credit-card"></i>
+                <span>Bayar Sekarang (Midtrans)</span>
+            </button>
+            <button id="wa-checkout-btn" onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white py-4 rounded-2xl font-bold text-lg hover:bg-[#20bd5c] transition-all shadow-xl shadow-green-100 flex items-center justify-center space-x-3">
+                <i class="fab fa-whatsapp text-2xl"></i>
+                <span>Pesan via WhatsApp</span>
+            </button>
+            <p class="text-[10px] text-center text-gray-400 mt-4 uppercase tracking-widest">Pesan hari ini, Panggang hari ini</p>
+        </div>
+    </div>
+    <script src="js/cart.js?v=1.1" defer></script>
 
     <!-- Header Section -->
     <header class="pt-40 pb-20 text-center px-6">
