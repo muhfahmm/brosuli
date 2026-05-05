@@ -49,37 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
     <style> body { font-family: 'Outfit', sans-serif; } </style>
 </head>
 <body class="bg-[#FDFCF6] min-h-screen flex">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-[#4A2C2A] text-white hidden md:flex flex-col">
-        <div class="p-6">
-            <h1 class="text-2xl font-bold">Brosuli</h1>
-            <p class="text-amber-300 text-sm">Admin Panel</p>
-        </div>
-        <nav class="flex-1 px-4 py-4 space-y-2">
-            <a href="index.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
-                <i class="fas fa-bread-slice"></i>
-                <span>Products</span>
-            </a>
-            <a href="categories.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
-                <i class="fas fa-tags"></i>
-                <span>Categories</span>
-            </a>
-            <a href="banners.php" class="flex items-center space-x-3 hover:bg-white/5 p-3 rounded-lg transition-colors">
-                <i class="fas fa-images"></i>
-                <span>Banners</span>
-            </a>
-            <a href="best_sellers.php" class="flex items-center space-x-3 bg-white/10 p-3 rounded-lg">
-                <i class="fas fa-star"></i>
-                <span>Best Sellers</span>
-            </a>
-        </nav>
-        <div class="p-4 border-t border-white/10">
-            <a href="logout.php" class="flex items-center space-x-3 text-red-300 hover:text-red-100 transition-colors">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </a>
-        </div>
-    </aside>
+    <?php include 'sidebar.php'; ?>
 
     <main class="flex-1 flex flex-col">
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
