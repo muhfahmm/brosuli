@@ -272,10 +272,14 @@ $categories = $cat_stmt->fetchAll();
         }
 
         function clearCart() {
-            if (confirm('Kosongkan keranjang?')) {
-                cart = [];
-                renderCart();
-            }
+            showConfirm(
+                'Kosongkan Keranjang?', 
+                'Semua item dalam keranjang akan dihapus. Lanjutkan?', 
+                function() {
+                    cart = [];
+                    renderCart();
+                }
+            );
         }
 
         function renderCart() {
@@ -556,14 +560,17 @@ $categories = $cat_stmt->fetchAll();
                     document.getElementById('successModal').classList.remove('hidden');
                     document.getElementById('successModal').classList.add('flex');
                 } else {
-                    alert('Error: ' + data.message);
+                    showError(data.message);
                 }
             })
             .catch(err => {
                 console.error(err);
-                alert('Terjadi kesalahan saat memproses pesanan.');
+                showError('Terjadi kesalahan saat memproses pesanan.');
             });
         });
     </script>
+    <?php include '../includes/modals/success_modal.php'; ?>
+    <?php include '../includes/modals/error_modal.php'; ?>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
 </body>
 </html>

@@ -170,6 +170,9 @@ if (isset($_GET['delete'])) {
     </div>
     
     <?php include 'product_modals.php'; ?>
+    <?php include '../includes/modals/success_modal.php'; ?>
+    <?php include '../includes/modals/error_modal.php'; ?>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
 
     <script>
         function addToPrintQueue(productId) {
@@ -181,9 +184,9 @@ if (isset($_GET['delete'])) {
             .then(res => res.json())
             .then(data => {
                 if (data.success) {
-                    alert('Produk ditambahkan ke antrean cetak label.');
+                    showSuccess('Produk ditambahkan ke antrean cetak label.');
                 } else {
-                    alert('Gagal: ' + data.message);
+                    showError(data.message);
                 }
             });
         }

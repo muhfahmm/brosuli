@@ -50,9 +50,9 @@ if (isset($_GET['clear'])) {
             <button onclick="window.print()" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-blue-700">
                 <i class="fas fa-print mr-2"></i>Cetak Sekarang
             </button>
-            <a href="?clear=1" onclick="return confirm('Kosongkan antrean?')" class="bg-rose-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-rose-600">
+            <button onclick="confirmClearQueue()" class="bg-rose-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg hover:bg-rose-600">
                 Kosongkan Antrean
-            </a>
+            </button>
             <a href="index.php" class="text-gray-500 hover:underline">Kembali</a>
         </div>
     </div>
@@ -88,5 +88,18 @@ if (isset($_GET['clear'])) {
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <?php include '../includes/modals/confirm_modal.php'; ?>
+    
+    <script>
+        function confirmClearQueue() {
+            showConfirm(
+                'Kosongkan Antrean?', 
+                'Semua produk dalam antrean cetak akan dihapus. Lanjutkan?', 
+                function() {
+                    window.location.href = '?clear=1';
+                }
+            );
+        }
+    </script>
 </body>
 </html>
