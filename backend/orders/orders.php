@@ -1,5 +1,7 @@
 <?php
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
+requireLogin();
 
 // Auto-create table if not exists (Foolproof)
 $pdo->exec("CREATE TABLE IF NOT EXISTS orders (
@@ -32,7 +34,7 @@ $orders = $stmt->fetchAll();
     </style>
 </head>
 <body class="bg-[#FDFCF6] min-h-screen flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col">

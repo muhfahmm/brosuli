@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 // Fetch banners
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_banner'])) {
     $image_url = '';
 
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-        $upload_dir = '../uploads/banners/';
+        $upload_dir = '../../uploads/banners/';
         if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
         $file_name = time() . '_' . basename($_FILES['image']['name']);
         if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_dir . $file_name)) {
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_banner'])) {
     <style> body { font-family: 'Outfit', sans-serif; } </style>
 </head>
 <body class="bg-[#FDFCF6] min-h-screen flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
     <main class="flex-1 flex flex-col">
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_banner'])) {
                 <?php foreach ($banners as $banner): ?>
                 <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 group">
                     <div class="relative h-48 overflow-hidden">
-                        <img src="../<?php echo $banner['image_url']; ?>" class="w-full h-full object-cover">
+                        <img src="../../<?php echo $banner['image_url']; ?>" class="w-full h-full object-cover">
                         <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center space-x-4">
                             <a href="?delete=<?php echo $banner['id']; ?>" onclick="return confirm('Delete banner?')" class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-red-600"><i class="fas fa-trash"></i></a>
                         </div>

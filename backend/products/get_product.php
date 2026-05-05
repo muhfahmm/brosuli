@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 if (isset($_GET['id'])) {

@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 // Fetch products
@@ -29,7 +29,7 @@ $categories = $cat_stmt->fetchAll();
     </style>
 </head>
 <body class="min-h-screen flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
     <!-- Main POS Interface -->
     <main class="flex-1 flex h-screen overflow-hidden">
@@ -69,7 +69,7 @@ $categories = $cat_stmt->fetchAll();
                          data-category="<?php echo htmlspecialchars($product['category_name']); ?>"
                          onclick="addToCart(<?php echo htmlspecialchars(json_encode($product)); ?>)">
                         <div class="relative aspect-square rounded-2xl overflow-hidden mb-4 bg-gray-50">
-                            <img src="../<?php echo $product['image_url'] ?: 'https://via.placeholder.com/200'; ?>" 
+                            <img src="../../<?php echo $product['image_url'] ?: 'https://via.placeholder.com/200'; ?>" 
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                 <span class="bg-white text-[#4A2C2A] px-4 py-2 rounded-full font-bold shadow-lg add-btn">
@@ -261,7 +261,7 @@ $categories = $cat_stmt->fetchAll();
                 itemEl.className = 'flex items-center space-x-4 animate-fadeIn';
                 itemEl.innerHTML = `
                     <div class="w-16 h-16 rounded-2xl overflow-hidden bg-gray-50 flex-shrink-0">
-                        <img src="../${item.image || 'https://via.placeholder.com/100'}" class="w-full h-full object-cover">
+                        <img src="../../${item.image || 'https://via.placeholder.com/100'}" class="w-full h-full object-cover">
                     </div>
                     <div class="flex-1 min-w-0">
                         <h4 class="font-bold text-gray-800 truncate">${item.name}</h4>

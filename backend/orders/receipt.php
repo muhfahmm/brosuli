@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 $order_id = $_GET['order_id'] ?? '';

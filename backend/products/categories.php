@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 // Fetch categories
@@ -42,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     <style> body { font-family: 'Outfit', sans-serif; } </style>
 </head>
 <body class="bg-[#FDFCF6] min-h-screen flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col">

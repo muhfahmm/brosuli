@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once '../config.php';
-require_once '../db/db.php';
+require_once '../../config.php';
+require_once '../../db/db.php';
 
 // Get JSON data from frontend
 $input = file_get_contents('php://input');

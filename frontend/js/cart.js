@@ -126,7 +126,7 @@ function payWithMidtrans() {
 
     showToast('Menyiapkan pembayaran...');
 
-    fetch('../backend/create_payment.php', {
+    fetch('../backend/orders/create_payment.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderData)

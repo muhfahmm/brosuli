@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $image_url = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-        $upload_dir = '../uploads/';
+        $upload_dir = '../../uploads/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0777, true);
         }

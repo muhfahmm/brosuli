@@ -1,6 +1,6 @@
 <?php
-require_once 'auth.php';
-require_once '../db/db.php';
+require_once '../auth/auth.php';
+require_once '../../db/db.php';
 requireLogin();
 
 // Fetch best sellers with product details
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
     <style> body { font-family: 'Outfit', sans-serif; } </style>
 </head>
 <body class="bg-[#FDFCF6] min-h-screen flex">
-    <?php include 'sidebar.php'; ?>
+    <?php include '../includes/sidebar.php'; ?>
 
     <main class="flex-1 flex flex-col">
         <header class="bg-white shadow-sm px-8 py-4 flex justify-between items-center">
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
                         <?php foreach ($best_sellers as $bs): ?>
                         <tr class="hover:bg-gray-50 transition-colors">
                             <td class="px-6 py-4 flex items-center space-x-4">
-                                <img src="../<?php echo $bs['image_url'] ?: 'https://via.placeholder.com/40'; ?>" class="w-10 h-10 object-cover rounded-lg">
+                                <img src="../../<?php echo $bs['image_url'] ?: 'https://via.placeholder.com/40'; ?>" class="w-10 h-10 object-cover rounded-lg">
                                 <span class="font-medium text-gray-800"><?php echo htmlspecialchars($bs['product_name']); ?></span>
                             </td>
                             <td class="px-6 py-4 text-gray-500"><?php echo htmlspecialchars($bs['category_name']); ?></td>
