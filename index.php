@@ -135,10 +135,10 @@ if ($selected_branch_id) {
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 glass border-b border-white/20">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
+            <a href="index.php" class="flex items-center space-x-2">
                 <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-serif text-xl italic shadow-lg">B</div>
                 <span class="text-2xl font-serif font-bold tracking-tight">Brosuli</span>
-            </div>
+            </a>
             <div class="hidden md:flex items-center space-x-8 font-medium">
                 <a href="#home" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="frontend/catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
