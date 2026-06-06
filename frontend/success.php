@@ -25,7 +25,7 @@ require_once '../config.php';
             <p class="text-gray-500 mb-8 leading-relaxed">Terima kasih telah berbelanja di Brosuli Bakery. Pesanan Anda sedang kami proses dan akan segera dikirim.</p>
             
             <div class="space-y-4">
-                <a href="index.php" class="block w-full bg-primary text-white py-4 rounded-2xl font-bold hover:bg-secondary transition-all shadow-xl">
+                <a href="../index.php" class="block w-full bg-primary text-white py-4 rounded-2xl font-bold hover:bg-secondary transition-all shadow-xl">
                     Kembali ke Beranda
                 </a>
                 <button onclick="window.print()" class="text-gray-400 hover:text-primary transition-colors text-sm font-medium">

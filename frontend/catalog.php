@@ -106,12 +106,12 @@ if ($selected_branch_id) {
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass border-b border-white/20">
         <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="index.php" class="flex items-center space-x-2">
+            <a href="../index.php" class="flex items-center space-x-2">
                 <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-serif text-xl italic shadow-lg">B</div>
                 <span class="text-2xl font-serif font-bold tracking-tight">Brosuli</span>
             </a>
             <div class="hidden md:flex items-center space-x-8 font-medium">
-                <a href="index.php#home" class="hover:text-secondary transition-colors">Beranda</a>
+                <a href="../index.php#home" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="catalog.php" class="text-secondary">Menu Kami</a>
                 <button onclick="document.getElementById('branchModal').classList.remove('hidden')" class="flex items-center space-x-2 text-secondary hover:text-primary transition-all bg-secondary/10 px-4 py-1.5 rounded-full border border-secondary/20">
                     <i class="fas fa-map-marker-alt"></i>
@@ -123,7 +123,7 @@ if ($selected_branch_id) {
                     <i class="fas fa-shopping-bag text-2xl"></i>
                     <span class="cart-count absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
                 </button>
-                <a href="index.php" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md hidden sm:block">
+                <a href="../index.php" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md hidden sm:block">
                     Kembali
                 </a>
             </div>
