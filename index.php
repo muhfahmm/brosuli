@@ -142,6 +142,7 @@ if ($selected_branch_id) {
             <div class="hidden md:flex items-center space-x-8 font-medium">
                 <a href="#home" class="hover:text-secondary transition-colors">Beranda</a>
                 <a href="frontend/catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
+                <a href="frontend/contact.php" class="hover:text-secondary transition-colors">Hubungi Kami</a>
                 <button onclick="document.getElementById('branchModal').classList.remove('hidden')" class="flex items-center space-x-2 text-secondary hover:text-primary transition-all bg-secondary/10 px-4 py-1.5 rounded-full border border-secondary/20">
                     <i class="fas fa-map-marker-alt"></i>
                     <span class="text-sm font-bold"><?php echo htmlspecialchars($selected_branch_name); ?></span>
@@ -307,8 +308,195 @@ if ($selected_branch_id) {
         </div>
     </section>
 
+    <!-- About Us Section -->
+    <section id="about" class="py-24 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <span class="text-secondary font-bold tracking-widest uppercase text-sm">Tentang Kami</span>
+                    <h2 class="text-4xl md:text-5xl font-serif font-bold mt-4 mb-6">Warisan Kelezatan Sejak 2009</h2>
+                    <p class="text-white/80 leading-relaxed mb-6 text-lg">
+                        Brosuli Bakery memulai perjalanan dengan visi sederhana: menghadirkan brownies berkualitas tinggi dengan cita rasa autentik yang tak terlupakan. Dari sebuah toko kecil, kami telah berkembang menjadi jaringan bakery terpercaya di Jawa Tengah.
+                    </p>
+                    <p class="text-white/80 leading-relaxed mb-8 text-lg">
+                        Setiap produk dibuat dengan bahan-bahan pilihan terbaik dan resep rahasia yang telah teruji selama bertahun-tahun. Komitmen kami adalah memberikan pengalaman kuliner terbaik untuk setiap pelanggan setia.
+                    </p>
+                    <a href="frontend/catalog.php" class="inline-block bg-secondary hover:bg-amber-600 text-primary px-8 py-4 rounded-full font-bold transition-all shadow-lg">
+                        Jelajahi Produk Kami
+                    </a>
+                </div>
+                <div class="space-y-8">
+                    <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center text-xl flex-shrink-0 font-bold">
+                                ✓
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Bahan Premium</h3>
+                                <p class="text-white/70">Menggunakan bahan-bahan berkualitas tinggi pilihan untuk setiap produk.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center text-xl flex-shrink-0 font-bold">
+                                ✓
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Resep Rahasia</h3>
+                                <p class="text-white/70">Resep tradisional yang telah disempurnakan selama lebih dari satu dekade.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl border border-white/20">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-secondary text-primary rounded-full flex items-center justify-center text-xl flex-shrink-0 font-bold">
+                                ✓
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold mb-2">Konsistensi Terjamin</h3>
+                                <p class="text-white/70">Kualitas rasa yang sama di setiap pembelian, di mana pun Anda berada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section id="why-us" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-secondary font-bold tracking-widest uppercase text-sm">Keunggulan Kami</span>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold mt-4 text-primary">Mengapa Memilih Brosuli?</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="bg-cream rounded-3xl p-10 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-secondary/10">
+                    <div class="w-20 h-20 bg-secondary text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Dibuat dengan Cinta</h3>
+                    <p class="text-gray-500 leading-relaxed">Setiap gigitan mencerminkan dedikasi dan passion kami dalam menciptakan produk terbaik untuk Anda.</p>
+                </div>
+                <div class="bg-cream rounded-3xl p-10 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-secondary/10">
+                    <div class="w-20 h-20 bg-secondary text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Pengiriman Cepat</h3>
+                    <p class="text-gray-500 leading-relaxed">Nikmati produk fresh kami dengan sistem pengiriman yang cepat dan aman langsung ke pintu rumah Anda.</p>
+                </div>
+                <div class="bg-cream rounded-3xl p-10 text-center hover:shadow-2xl hover:scale-105 transition-all duration-300 border border-secondary/10">
+                    <div class="w-20 h-20 bg-secondary text-white rounded-full flex items-center justify-center text-4xl mx-auto mb-6">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-primary mb-4">Kualitas Terjamin</h3>
+                    <p class="text-gray-500 leading-relaxed">Standar kualitas internasional dengan sentuhan lokal yang membuat produk kami unik dan istimewa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-24 bg-gradient-to-b from-cream to-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-secondary font-bold tracking-widest uppercase text-sm">Kepuasan Pelanggan</span>
+                <h2 class="text-4xl md:text-5xl font-serif font-bold mt-4 text-primary">Apa Kata Pelanggan Kami?</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="bg-white rounded-3xl p-10 shadow-lg border-l-4 border-secondary">
+                    <div class="flex items-center mb-4">
+                        <div class="flex space-x-1">
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 ml-2">5/5</span>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed mb-6 italic">
+                        "Brownies Brosuli adalah yang terbaik yang pernah saya coba! Teksturnya lembut, rasanya nikmat, dan pelayanannya super ramah. Pasti beli lagi!"
+                    </p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold">
+                            SR
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Siti Rahayu</h4>
+                            <p class="text-xs text-gray-400">Pelanggan Setia</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl p-10 shadow-lg border-l-4 border-secondary">
+                    <div class="flex items-center mb-4">
+                        <div class="flex space-x-1">
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 ml-2">5/5</span>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed mb-6 italic">
+                        "Sering membeli untuk hadiah teman dan keluarga. Kemasan cantik, isi fresh, dan selalu membuat orang senang. Highly recommended!"
+                    </p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold">
+                            BD
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Bambang Dwi</h4>
+                            <p class="text-xs text-gray-400">Pelanggan Setia</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-3xl p-10 shadow-lg border-l-4 border-secondary">
+                    <div class="flex items-center mb-4">
+                        <div class="flex space-x-1">
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                            <i class="fas fa-star text-secondary text-lg"></i>
+                        </div>
+                        <span class="text-xs font-bold text-gray-400 ml-2">5/5</span>
+                    </div>
+                    <p class="text-gray-600 leading-relaxed mb-6 italic">
+                        "Setiap kali ada acara spesial, pasti pesan Brosuli. Kualitas konsisten, delivery tepat waktu, dan harganya worth it banget!"
+                    </p>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-white font-bold">
+                            AW
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-primary">Ani Wijaya</h4>
+                            <p class="text-xs text-gray-400">Pelanggan Setia</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-primary">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold text-white mb-6">Siap Merasakan Kelezatan?</h2>
+            <p class="text-white/80 text-lg mb-10 leading-relaxed">
+                Jangan lewatkan kesempatan untuk menikmati brownies premium Brosuli yang dibuat dengan cinta dan bahan terbaik.
+            </p>
+            <a href="frontend/catalog.php" class="inline-block bg-secondary hover:bg-amber-600 text-primary px-10 py-5 rounded-full font-bold text-lg transition-all shadow-xl transform hover:scale-105">
+                Pesan Sekarang - Fresh & Lezat
+            </a>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer id="contact" class="bg-white pt-24 pb-12 border-t border-amber-50">
+
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-16 mb-20">
                 <div class="col-span-1 md:col-span-1">
@@ -331,6 +519,7 @@ if ($selected_branch_id) {
                     <ul class="space-y-4 text-gray-500">
                         <li><a href="index.php#home" class="hover:text-secondary transition-colors">Beranda</a></li>
                         <li><a href="frontend/catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a></li>
+                        <li><a href="frontend/contact.php" class="hover:text-secondary transition-colors">Hubungi Kami</a></li>
                         <li><a href="frontend/location.php" class="hover:text-secondary transition-colors">Lokasi</a></li>
                     </ul>
                 </div>
