@@ -43,7 +43,7 @@ try {
     $customer_name = $data['customer_name'] ?? 'Pelanggan';
     $customer_phone = $data['customer_phone'] ?? '';
 
-    $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, items_json, branch_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $pdo->prepare("INSERT INTO tb_orders (order_id, customer_name, customer_address, total_amount, payment_status, items_json, branch_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
     $stmt->execute([
         $order_id,
         $customer_name,

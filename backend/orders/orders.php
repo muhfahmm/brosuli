@@ -4,7 +4,7 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Auto-create table if not exists (Foolproof)
-$pdo->exec("CREATE TABLE IF NOT EXISTS orders (
+$pdo->exec("CREATE TABLE IF NOT EXISTS tb_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id VARCHAR(50) UNIQUE NOT NULL,
     customer_name VARCHAR(100),
@@ -21,10 +21,10 @@ $role = $_SESSION['admin_role'] ?? 'superadmin';
 $branch_id = $_SESSION['admin_branch_id'] ?? null;
 
 if ($role == 'admin_cabang') {
-    $stmt = $pdo->prepare("SELECT * FROM orders WHERE branch_id = ? ORDER BY created_at DESC");
+    $stmt = $pdo->prepare("SELECT * FROM tb_orders WHERE branch_id = ? ORDER BY created_at DESC");
     $stmt->execute([$branch_id]);
 } else {
-    $stmt = $pdo->query("SELECT * FROM orders ORDER BY created_at DESC");
+    $stmt = $pdo->query("SELECT * FROM tb_orders ORDER BY created_at DESC");
 }
 $orders = $stmt->fetchAll();
 ?>

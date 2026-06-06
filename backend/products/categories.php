@@ -4,14 +4,14 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Fetch categories
-$stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$stmt = $pdo->query("SELECT * FROM tb_categories ORDER BY name ASC");
 $categories = $stmt->fetchAll();
 
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     try {
-        $stmt = $pdo->prepare("DELETE FROM categories WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM tb_categories WHERE id = ?");
         $stmt->execute([$id]);
         header('Location: categories.php');
     } catch (PDOException $e) {
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_category'])) {
     $name = $_POST['name'] ?? '';
     $description = $_POST['description'] ?? '';
     if ($name) {
-        $stmt = $pdo->prepare("INSERT INTO categories (name, description) VALUES (?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_categories (name, description) VALUES (?, ?)");
         $stmt->execute([$name, $description]);
         header('Location: categories.php');
     }

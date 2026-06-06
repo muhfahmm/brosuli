@@ -31,7 +31,7 @@ if ($transaction_status == 'capture') {
 
 // Update Database
 try {
-    $stmt = $pdo->prepare("UPDATE orders SET payment_status = ? WHERE order_id = ?");
+    $stmt = $pdo->prepare("UPDATE tb_orders SET payment_status = ? WHERE order_id = ?");
     $stmt->execute([$status, $order_id]);
     echo "OK";
 } catch (PDOException $e) {

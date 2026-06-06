@@ -6,7 +6,7 @@ $error = '';
 $success = '';
 
 // Check if a superadmin already exists
-$super_stmt = $pdo->query("SELECT COUNT(*) FROM admin WHERE role = 'superadmin'");
+$super_stmt = $pdo->query("SELECT COUNT(*) FROM tb_admin WHERE role = 'superadmin'");
 $superadmin_exists = $super_stmt->fetchColumn() > 0;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -26,14 +26,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Passwords do not match';
         } else {
             // Check if username already exists
-            $stmt = $pdo->prepare("SELECT id FROM admin WHERE username = ?");
+            $stmt = $pdo->prepare("SELECT id FROM tb_admin WHERE username = ?");
             $stmt->execute([$username]);
             if ($stmt->fetch()) {
                 $error = 'Username already taken';
             } else {
                 // Hash password and insert
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $pdo->prepare("INSERT INTO admin (username, password, role, branch_id) VALUES (?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO tb_admin (username, password, role, branch_id) VALUES (?, ?, ?, ?)");
                 if ($stmt->execute([$username, $hashed_password, $role, $branch_id])) {
                     $success = 'Registration successful! You can now login.';
                     // Refresh superadmin exists status after successful registration
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fetch branches for selection
-$branch_stmt = $pdo->query("SELECT id, name FROM branches ORDER BY name ASC");
+$branch_stmt = $pdo->query("SELECT id, name FROM tb_branches ORDER BY name ASC");
 $branches = $branch_stmt->fetchAll();
 ?>
 <!DOCTYPE html>

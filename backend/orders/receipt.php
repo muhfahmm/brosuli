@@ -9,7 +9,7 @@ if (!$order_id) {
     die("Order ID not provided.");
 }
 
-$stmt = $pdo->prepare("SELECT * FROM orders WHERE order_id = ?");
+$stmt = $pdo->prepare("SELECT * FROM tb_orders WHERE order_id = ?");
 $stmt->execute([$order_id]);
 $order = $stmt->fetch();
 

@@ -4,7 +4,7 @@ require_once 'db.php';
 try {
     $sql = "
     -- Add Branches table
-    CREATE TABLE IF NOT EXISTS branches (
+    CREATE TABLE IF NOT EXISTS tb_branches (
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         address TEXT,
@@ -13,24 +13,24 @@ try {
 
     -- Modify Admin table
     -- Check if columns already exist to avoid errors
-    $checkAdmin = \$pdo->query(\"SHOW COLUMNS FROM admin LIKE 'role'\");
+    $checkAdmin = \$pdo->query(\"SHOW COLUMNS FROM tb_admin LIKE 'role'\");
     if (\$checkAdmin->rowCount() == 0) {
-        \$pdo->exec(\"ALTER TABLE admin ADD COLUMN role ENUM('superadmin', 'admin_cabang') DEFAULT 'superadmin'\");
-        \$pdo->exec(\"ALTER TABLE admin ADD COLUMN branch_id INT NULL\");
-        \$pdo->exec(\"ALTER TABLE admin ADD FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL\");
+        \$pdo->exec(\"ALTER TABLE tb_admin ADD COLUMN role ENUM('superadmin', 'admin_cabang') DEFAULT 'superadmin'\");
+        \$pdo->exec(\"ALTER TABLE tb_admin ADD COLUMN branch_id INT NULL\");
+        \$pdo->exec(\"ALTER TABLE tb_admin ADD FOREIGN KEY (branch_id) REFERENCES tb_branches(id) ON DELETE SET NULL\");
     }
 
     -- Modify Orders table
-    \$checkOrders = \$pdo->query(\"SHOW COLUMNS FROM orders LIKE 'branch_id'\");
+    \$checkOrders = \$pdo->query(\"SHOW COLUMNS FROM tb_orders LIKE 'branch_id'\");
     if (\$checkOrders->rowCount() == 0) {
-        \$pdo->exec(\"ALTER TABLE orders ADD COLUMN branch_id INT NULL\");
-        \$pdo->exec(\"ALTER TABLE orders ADD FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL\");
+        \$pdo->exec(\"ALTER TABLE tb_orders ADD COLUMN branch_id INT NULL\");
+        \$pdo->exec(\"ALTER TABLE tb_orders ADD FOREIGN KEY (branch_id) REFERENCES tb_branches(id) ON DELETE SET NULL\");
     }
 
     -- Insert some initial branches if empty
-    \$stmt = \$pdo->query(\"SELECT COUNT(*) FROM branches\");
+    \$stmt = \$pdo->query(\"SELECT COUNT(*) FROM tb_branches\");
     if (\$stmt->fetchColumn() == 0) {
-        \$pdo->exec(\"INSERT INTO branches (name, address) VALUES 
+        \$pdo->exec(\"INSERT INTO tb_branches (name, address) VALUES 
         ('Brosuli Boyolali (Utama)', 'Jl. Pandanaran No.275, Sidoharjo, Banaran, Kec. Boyolali'),
         ('Brosuli Mojosongo', 'Ruko Techno Park, Jl. Merdeka Timur, Mojosongo'),
         ('Brosuli Kartasura', 'Jl. Brigjen Katamso, Ngemplak, Kartasura'),

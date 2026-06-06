@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (!empty($username) && !empty($password)) {
         // Check if username exists
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM admin WHERE username = ?");
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM tb_admin WHERE username = ?");
         $stmt->execute([$username]);
         if ($stmt->fetchColumn() > 0) {
             header('Location: index.php?msg=error_exists');
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Hash password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
-        $stmt = $pdo->prepare("INSERT INTO admin (username, password, role, branch_id) VALUES (?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_admin (username, password, role, branch_id) VALUES (?, ?, ?, ?)");
         if ($stmt->execute([$username, $hashed_password, $role, $branch_id])) {
             header('Location: index.php?msg=added');
         } else {

@@ -4,7 +4,7 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Auto-create branches table and modify others if needed
-$pdo->exec("CREATE TABLE IF NOT EXISTS branches (
+$pdo->exec("CREATE TABLE IF NOT EXISTS tb_branches (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     address TEXT,
@@ -13,14 +13,14 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS branches (
 
 // Add columns to admin and orders if not exists
 try {
-    $pdo->exec("ALTER TABLE admin ADD COLUMN role ENUM('superadmin', 'admin_cabang') DEFAULT 'superadmin'");
-    $pdo->exec("ALTER TABLE admin ADD COLUMN branch_id INT NULL");
-    $pdo->exec("ALTER TABLE admin ADD FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL");
+    $pdo->exec("ALTER TABLE tb_admin ADD COLUMN role ENUM('superadmin', 'admin_cabang') DEFAULT 'superadmin'");
+    $pdo->exec("ALTER TABLE tb_admin ADD COLUMN branch_id INT NULL");
+    $pdo->exec("ALTER TABLE tb_admin ADD FOREIGN KEY (branch_id) REFERENCES tb_branches(id) ON DELETE SET NULL");
 } catch (Exception $e) {}
 
 try {
-    $pdo->exec("ALTER TABLE orders ADD COLUMN branch_id INT NULL");
-    $pdo->exec("ALTER TABLE orders ADD FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE SET NULL");
+    $pdo->exec("ALTER TABLE tb_orders ADD COLUMN branch_id INT NULL");
+    $pdo->exec("ALTER TABLE tb_orders ADD FOREIGN KEY (branch_id) REFERENCES tb_branches(id) ON DELETE SET NULL");
 } catch (Exception $e) {}
 
 // Seed branches if empty or missing
@@ -36,25 +36,25 @@ $branches_to_seed = [
 ];
 
 foreach ($branches_to_seed as $b) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM branches WHERE name = ?");
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM tb_branches WHERE name = ?");
     $stmt->execute([$b[0]]);
     if ($stmt->fetchColumn() == 0) {
-        $pdo->prepare("INSERT INTO branches (name, address) VALUES (?, ?)")->execute($b);
+        $pdo->prepare("INSERT INTO tb_branches (name, address) VALUES (?, ?)")->execute($b);
     }
 }
 
 // One-time cleanup for existing duplicates
-$pdo->exec("DELETE t1 FROM branches t1 INNER JOIN branches t2 WHERE t1.id > t2.id AND t1.name = t2.name");
+$pdo->exec("DELETE t1 FROM tb_branches t1 INNER JOIN tb_branches t2 WHERE t1.id > t2.id AND t1.name = t2.name");
 
 // Fetch all admins with branch info
 $stmt = $pdo->query("SELECT a.id, a.username, a.role, a.created_at, b.name as branch_name 
-                     FROM admin a 
-                     LEFT JOIN branches b ON a.branch_id = b.id 
+                     FROM tb_admin a 
+                     LEFT JOIN tb_branches b ON a.branch_id = b.id 
                      ORDER BY a.created_at DESC");
 $admins = $stmt->fetchAll();
 
 // Fetch all branches for the dropdown
-$branch_stmt = $pdo->query("SELECT id, name FROM branches ORDER BY name ASC");
+$branch_stmt = $pdo->query("SELECT id, name FROM tb_branches ORDER BY name ASC");
 $branches = $branch_stmt->fetchAll();
 
 // Handle deletion
@@ -62,11 +62,11 @@ if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
     
     // Prevent deleting the last admin or yourself if needed (basic check)
-    $stmt = $pdo->query("SELECT COUNT(*) FROM admin");
+    $stmt = $pdo->query("SELECT COUNT(*) FROM tb_admin");
     $count = $stmt->fetchColumn();
     
     if ($count > 1) {
-        $stmt = $pdo->prepare("DELETE FROM admin WHERE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM tb_admin WHERE id = ?");
         $stmt->execute([$id]);
         header('Location: index.php?msg=success');
     } else {

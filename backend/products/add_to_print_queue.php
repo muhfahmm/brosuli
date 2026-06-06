@@ -10,17 +10,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($product_id) {
         // Check if this product is already in the queue
-        $stmt = $pdo->prepare("SELECT id FROM label_print_queue WHERE product_id = ?");
+        $stmt = $pdo->prepare("SELECT id FROM tb_label_print_queue WHERE product_id = ?");
         $stmt->execute([$product_id]);
         $existing = $stmt->fetch();
         
         if ($existing) {
             // If already exists, increment quantity
-            $stmt = $pdo->prepare("UPDATE label_print_queue SET quantity = quantity + 1 WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE tb_label_print_queue SET quantity = quantity + 1 WHERE id = ?");
             $success = $stmt->execute([$existing['id']]);
         } else {
             // Insert new item
-            $stmt = $pdo->prepare("INSERT INTO label_print_queue (product_id, quantity) VALUES (?, 1)");
+            $stmt = $pdo->prepare("INSERT INTO tb_label_print_queue (product_id, quantity) VALUES (?, 1)");
             $success = $stmt->execute([$product_id]);
         }
         

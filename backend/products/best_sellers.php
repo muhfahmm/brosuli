@@ -5,20 +5,20 @@ requireLogin();
 
 // Fetch best sellers with product details
 $stmt = $pdo->query("SELECT bs.*, p.name as product_name, p.image_url, c.name as category_name 
-                    FROM best_sellers bs 
-                    JOIN products p ON bs.product_id = p.id 
-                    LEFT JOIN categories c ON p.category_id = c.id 
+                    FROM tb_best_sellers bs 
+                    JOIN tb_products p ON bs.product_id = p.id 
+                    LEFT JOIN tb_categories c ON p.category_id = c.id 
                     ORDER BY bs.display_order ASC");
 $best_sellers = $stmt->fetchAll();
 
 // Fetch all products for the selection modal
-$product_stmt = $pdo->query("SELECT id, name FROM products ORDER BY name ASC");
+$product_stmt = $pdo->query("SELECT id, name FROM tb_products ORDER BY name ASC");
 $all_products = $product_stmt->fetchAll();
 
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $stmt = $pdo->prepare("DELETE FROM best_sellers WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM tb_best_sellers WHERE id = ?");
     $stmt->execute([$id]);
     header('Location: best_sellers.php');
     exit();
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_best_seller'])) {
     $display_order = $_POST['display_order'] ?? 0;
     
     if ($product_id) {
-        $stmt = $pdo->prepare("INSERT INTO best_sellers (product_id, display_order) VALUES (?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_best_sellers (product_id, display_order) VALUES (?, ?)");
         $stmt->execute([$product_id, $display_order]);
         header('Location: best_sellers.php');
         exit();

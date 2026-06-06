@@ -4,7 +4,7 @@ require_once '../db/db.php';
 require_once '../config.php';
 
 // Fetch branches from database
-$branch_stmt = $pdo->query("SELECT * FROM branches ORDER BY name ASC");
+$branch_stmt = $pdo->query("SELECT * FROM tb_branches ORDER BY name ASC");
 $branches_db = $branch_stmt->fetchAll();
 
 // Get selected branch from session

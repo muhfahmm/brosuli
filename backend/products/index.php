@@ -5,14 +5,14 @@ requireLogin();
 
 // Auto-initialize branch_inventory if missing
 try {
-    $pdo->exec("CREATE TABLE IF NOT EXISTS branch_inventory (
+    $pdo->exec("CREATE TABLE IF NOT EXISTS tb_branch_inventory (
         id INT AUTO_INCREMENT PRIMARY KEY,
         branch_id INT NOT NULL,
         product_id INT NOT NULL,
         stock INT DEFAULT 0,
         UNIQUE KEY (branch_id, product_id),
-        FOREIGN KEY (branch_id) REFERENCES branches(id) ON DELETE CASCADE,
-        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+        FOREIGN KEY (branch_id) REFERENCES tb_branches(id) ON DELETE CASCADE,
+        FOREIGN KEY (product_id) REFERENCES tb_products(id) ON DELETE CASCADE
     )");
 } catch (Exception $e) {}
 
@@ -21,9 +21,9 @@ $admin_branch_id = $_SESSION['admin_branch_id'] ?? null;
 if ($admin_branch_id) {
     // Branch Admin: Only show products that ARE added to this branch (INNER JOIN)
     $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, bi.stock as branch_stock 
-                         FROM products p 
-                         INNER JOIN branch_inventory bi ON p.id = bi.product_id 
-                         LEFT JOIN categories c ON p.category_id = c.id 
+                         FROM tb_products p 
+                         INNER JOIN tb_branch_inventory bi ON p.id = bi.product_id 
+                         LEFT JOIN tb_categories c ON p.category_id = c.id 
                          WHERE bi.branch_id = ?
                          ORDER BY p.created_at DESC");
     $stmt->execute([$admin_branch_id]);
@@ -31,17 +31,17 @@ if ($admin_branch_id) {
 
     // Fetch products NOT YET in this branch (from catalog)
     $stmt_catalog = $pdo->prepare("SELECT p.*, c.name as category_name 
-                                  FROM products p 
-                                  LEFT JOIN categories c ON p.category_id = c.id 
-                                  WHERE p.id NOT IN (SELECT product_id FROM branch_inventory WHERE branch_id = ?)
+                                  FROM tb_products p 
+                                  LEFT JOIN tb_categories c ON p.category_id = c.id 
+                                  WHERE p.id NOT IN (SELECT product_id FROM tb_branch_inventory WHERE branch_id = ?)
                                   ORDER BY p.name ASC");
     $stmt_catalog->execute([$admin_branch_id]);
     $catalog_products = $stmt_catalog->fetchAll();
 } else {
     // Superadmin: Fetch everything
-    $stmt = $pdo->query("SELECT p.*, c.name as category_name, (SELECT SUM(stock) FROM branch_inventory WHERE product_id = p.id) as branch_stock 
-                        FROM products p 
-                        LEFT JOIN categories c ON p.category_id = c.id 
+    $stmt = $pdo->query("SELECT p.*, c.name as category_name, (SELECT SUM(stock) FROM tb_branch_inventory WHERE product_id = p.id) as branch_stock 
+                        FROM tb_products p 
+                        LEFT JOIN tb_categories c ON p.category_id = c.id 
                         ORDER BY p.created_at DESC");
     $products = $stmt->fetchAll();
 }
@@ -49,7 +49,7 @@ if ($admin_branch_id) {
 // Handle Claiming Product from Catalog
 if (isset($_POST['claim_product']) && $admin_branch_id) {
     $p_id = $_POST['product_id'];
-    $stmt = $pdo->prepare("INSERT IGNORE INTO branch_inventory (branch_id, product_id, stock) VALUES (?, ?, 0)");
+    $stmt = $pdo->prepare("INSERT IGNORE INTO tb_branch_inventory (branch_id, product_id, stock) VALUES (?, ?, 0)");
     $stmt->execute([$admin_branch_id, $p_id]);
     header('Location: index.php');
     exit();
@@ -60,7 +60,7 @@ if (isset($_POST['ajax_update_stock']) && $admin_branch_id) {
     $p_id = $_POST['product_id'];
     $new_stock = $_POST['stock'];
     
-    $stmt = $pdo->prepare("INSERT INTO branch_inventory (branch_id, product_id, stock) VALUES (?, ?, ?) 
+    $stmt = $pdo->prepare("INSERT INTO tb_branch_inventory (branch_id, product_id, stock) VALUES (?, ?, ?) 
                          ON DUPLICATE KEY UPDATE stock = ?");
     $success = $stmt->execute([$admin_branch_id, $p_id, $new_stock, $new_stock]);
     
@@ -69,13 +69,13 @@ if (isset($_POST['ajax_update_stock']) && $admin_branch_id) {
 }
 
 // Fetch all categories for the modal
-$cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$cat_stmt = $pdo->query("SELECT * FROM tb_categories ORDER BY name ASC");
 $categories = $cat_stmt->fetchAll();
 
 // Deletion logic
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $stmt = $pdo->prepare("DELETE FROM products WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM tb_products WHERE id = ?");
     $stmt->execute([$id]);
     header('Location: index.php');
     exit();
@@ -84,7 +84,7 @@ if (isset($_GET['delete'])) {
 // Fetch branch info
 $branch_name = 'Seluruh Cabang (Pusat)';
 if (!empty($_SESSION['admin_branch_id'])) {
-    $stmt = $pdo->prepare("SELECT name FROM branches WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT name FROM tb_branches WHERE id = ?");
     $stmt->execute([$_SESSION['admin_branch_id']]);
     $branch_name = $stmt->fetchColumn() ?: 'Cabang Tidak Diketahui';
 }

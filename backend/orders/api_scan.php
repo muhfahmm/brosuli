@@ -8,9 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($barcode) {
         // Clear previous queue (optional, to keep it fresh for 1 cashier)
-        $pdo->exec("DELETE FROM scan_queue");
+        $pdo->exec("DELETE FROM tb_scan_queue");
         
-        $stmt = $pdo->prepare("INSERT INTO scan_queue (barcode) VALUES (?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_scan_queue (barcode) VALUES (?)");
         $success = $stmt->execute([$barcode]);
         
         if ($success) {

@@ -4,13 +4,13 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Fetch banners
-$stmt = $pdo->query("SELECT * FROM banners ORDER BY created_at DESC");
+$stmt = $pdo->query("SELECT * FROM tb_banners ORDER BY created_at DESC");
 $banners = $stmt->fetchAll();
 
 // Handle Delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
-    $stmt = $pdo->prepare("DELETE FROM banners WHERE id = ?");
+    $stmt = $pdo->prepare("DELETE FROM tb_banners WHERE id = ?");
     $stmt->execute([$id]);
     header('Location: banners.php');
     exit();

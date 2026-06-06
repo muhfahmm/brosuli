@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $branch_id = $_SESSION['admin_branch_id'] ?? null;
         
-        $stmt = $pdo->prepare("INSERT INTO orders (order_id, customer_name, customer_address, total_amount, payment_status, payment_method, items_json, branch_id) 
+        $stmt = $pdo->prepare("INSERT INTO tb_orders (order_id, customer_name, customer_address, total_amount, payment_status, payment_method, items_json, branch_id) 
                                VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
         
         $success = $stmt->execute([

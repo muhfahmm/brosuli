@@ -35,15 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($id) {
         // Update
         if ($image_url) {
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, image_url = ?, is_featured = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE tb_products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, image_url = ?, is_featured = ? WHERE id = ?");
             $stmt->execute([$name, $barcode, $category_id, $price, $description, $image_url, $is_featured, $id]);
         } else {
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, is_featured = ? WHERE id = ?");
+            $stmt = $pdo->prepare("UPDATE tb_products SET name = ?, barcode = ?, category_id = ?, price = ?, description = ?, is_featured = ? WHERE id = ?");
             $stmt->execute([$name, $barcode, $category_id, $price, $description, $is_featured, $id]);
         }
     } else {
         // Create
-        $stmt = $pdo->prepare("INSERT INTO products (name, barcode, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO tb_products (name, barcode, category_id, price, description, image_url, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$name, $barcode, $category_id, $price, $description, $image_url ?: '', $is_featured]);
     }
 

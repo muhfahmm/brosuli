@@ -4,12 +4,12 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Fetch all items in the queue
-$stmt = $pdo->query("SELECT q.*, p.name, p.price, p.barcode FROM label_print_queue q JOIN products p ON q.product_id = p.id");
+$stmt = $pdo->query("SELECT q.*, p.name, p.price, p.barcode FROM tb_label_print_queue q JOIN tb_products p ON q.product_id = p.id");
 $queue_items = $stmt->fetchAll();
 
 // Clear queue after fetching if user confirms? No, let's keep it until they click "Clear"
 if (isset($_GET['clear'])) {
-    $pdo->exec("DELETE FROM label_print_queue");
+    $pdo->exec("DELETE FROM tb_label_print_queue");
     header('Location: print_labels.php');
     exit();
 }

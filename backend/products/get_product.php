@@ -5,7 +5,7 @@ requireLogin();
 
 if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
+    $stmt = $pdo->prepare("SELECT * FROM tb_products WHERE id = ?");
     $stmt->execute([$id]);
     $product = $stmt->fetch();
     

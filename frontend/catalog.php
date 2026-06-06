@@ -4,7 +4,7 @@ require_once '../db/db.php';
 require_once '../config.php';
 
 // Fetch all categories
-$cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$cat_stmt = $pdo->query("SELECT * FROM tb_categories ORDER BY name ASC");
 $categories = $cat_stmt->fetchAll();
 
 // Get selected branch from session
@@ -13,42 +13,61 @@ $selected_branch_id = $_SESSION['user_branch_id'] ?? null;
 // Fetch products based on category filter
 $category_filter = isset($_GET['category']) ? $_GET['category'] : null;
 
+// Determine if filter is by name or ID
+$is_category_name = false;
+$category_id = null;
+
+if ($category_filter) {
+    // Check if it's a category name (from homepage link) or ID (from catalog filter)
+    if (!is_numeric($category_filter)) {
+        // It's a name, find its ID
+        $is_category_name = true;
+        $stmt = $pdo->prepare("SELECT id FROM tb_categories WHERE name = ?");
+        $stmt->execute([$category_filter]);
+        $result = $stmt->fetch();
+        $category_id = $result ? $result['id'] : null;
+    } else {
+        // It's an ID
+        $category_id = (int)$category_filter;
+    }
+}
+
 // Fetch products based on category filter with stock info (Only those active in this branch)
 if ($selected_branch_id) {
-    if ($category_filter) {
+    if ($category_id) {
         $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, bi.stock 
-                             FROM products p 
-                             INNER JOIN branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
-                             LEFT JOIN categories c ON p.category_id = c.id 
+                             FROM tb_products p 
+                             INNER JOIN tb_branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
+                             LEFT JOIN tb_categories c ON p.category_id = c.id 
                              WHERE p.category_id = ? ORDER BY p.name ASC");
-        $stmt->execute([$selected_branch_id, $category_filter]);
+        $stmt->execute([$selected_branch_id, $category_id]);
     } else {
         $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, bi.stock 
-                             FROM products p 
-                             INNER JOIN branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
-                             LEFT JOIN categories c ON p.category_id = c.id 
+                             FROM tb_products p 
+                             INNER JOIN tb_branch_inventory bi ON p.id = bi.product_id AND bi.branch_id = ?
+                             LEFT JOIN tb_categories c ON p.category_id = c.id 
                              ORDER BY p.name ASC");
         $stmt->execute([$selected_branch_id]);
     }
 } else {
     // No branch selected: Show all products from master catalog
-    if ($category_filter) {
+    if ($category_id) {
         $stmt = $pdo->prepare("SELECT p.*, c.name as category_name, 0 as stock 
-                             FROM products p 
-                             LEFT JOIN categories c ON p.category_id = c.id 
+                             FROM tb_products p 
+                             LEFT JOIN tb_categories c ON p.category_id = c.id 
                              WHERE p.category_id = ? ORDER BY p.name ASC");
-        $stmt->execute([$category_filter]);
+        $stmt->execute([$category_id]);
     } else {
         $stmt = $pdo->query("SELECT p.*, c.name as category_name, 0 as stock 
-                             FROM products p 
-                             LEFT JOIN categories c ON p.category_id = c.id 
+                             FROM tb_products p 
+                             LEFT JOIN tb_categories c ON p.category_id = c.id 
                              ORDER BY p.name ASC");
     }
 }
 $products = $stmt->fetchAll();
 
 // Fetch branches for selection
-$branch_stmt = $pdo->query("SELECT * FROM branches ORDER BY name ASC");
+$branch_stmt = $pdo->query("SELECT * FROM tb_branches ORDER BY name ASC");
 $branches = $branch_stmt->fetchAll();
 
 // Get selected branch from session
@@ -143,12 +162,12 @@ if ($selected_branch_id) {
         <div class="max-w-7xl mx-auto px-6">
             <!-- Category Filter -->
             <div class="flex flex-wrap justify-center gap-4 mb-16">
-                <a href="catalog.php" class="px-6 py-2 rounded-full font-semibold transition-all <?php echo !$category_filter ? 'bg-primary text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-100'; ?>">
+                <a href="catalog.php" class="px-6 py-2 rounded-full font-semibold transition-all <?php echo !$category_id ? 'bg-primary text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-100'; ?>">
                     Semua
                 </a>
                 <?php foreach ($categories as $cat): ?>
-                <a href="?category=<?php echo $cat['id']; ?>" 
-                    class="px-6 py-2 rounded-full font-semibold transition-all <?php echo $category_filter == $cat['id'] ? 'bg-primary text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-100'; ?>">
+                <a href="?category=<?php echo urlencode($cat['name']); ?>" 
+                    class="px-6 py-2 rounded-full font-semibold transition-all <?php echo $category_id == $cat['id'] ? 'bg-primary text-white shadow-lg' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-100'; ?>">
                     <?php echo htmlspecialchars($cat['name']); ?>
                 </a>
                 <?php endforeach; ?>

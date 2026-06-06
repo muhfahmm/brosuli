@@ -4,11 +4,11 @@ require_once '../../db/db.php';
 requireLogin();
 
 // Fetch products
-$stmt = $pdo->query("SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.name ASC");
+$stmt = $pdo->query("SELECT p.*, c.name as category_name FROM tb_products p LEFT JOIN tb_categories c ON p.category_id = c.id ORDER BY p.name ASC");
 $products = $stmt->fetchAll();
 
 // Fetch categories
-$cat_stmt = $pdo->query("SELECT * FROM categories ORDER BY name ASC");
+$cat_stmt = $pdo->query("SELECT * FROM tb_categories ORDER BY name ASC");
 $categories = $cat_stmt->fetchAll();
 ?>
 <!DOCTYPE html>

@@ -11,11 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if ($id) {
         // Update quantity
-        $stmt = $pdo->prepare("UPDATE label_print_queue SET quantity = GREATEST(1, quantity + ?) WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE tb_label_print_queue SET quantity = GREATEST(1, quantity + ?) WHERE id = ?");
         $success = $stmt->execute([$delta, $id]);
         
         // Fetch new quantity
-        $stmt = $pdo->prepare("SELECT quantity FROM label_print_queue WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT quantity FROM tb_label_print_queue WHERE id = ?");
         $stmt->execute([$id]);
         $new_qty = $stmt->fetchColumn();
         
