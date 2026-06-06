@@ -3,6 +3,30 @@ session_start();
 require_once 'db/db.php';
 require_once 'config.php';
 
+// ==================== HANDLE CONTACT FORM SUBMISSION ====================
+$contact_success = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['contact_name'])) {
+    try {
+        $stmt = $pdo->prepare("INSERT INTO tb_contact_messages (contact_name, contact_email, contact_message) VALUES (?, ?, ?)");
+        $stmt->execute([
+            $_POST['contact_name'],
+            $_POST['contact_email'],
+            $_POST['contact_message']
+        ]);
+        
+        // Redirect to remove POST data dan prevent resubmission on refresh
+        header('Location: ' . $_SERVER['REQUEST_URI'] . '#contact-form?contact_sent=1');
+        exit();
+    } catch (Exception $e) {
+        // Silent error - continue anyway
+    }
+}
+
+// Check if coming from successful redirect
+$contact_success = isset($_GET['contact_sent']) && $_GET['contact_sent'] === '1';
+
+// ==================== END CONTACT FORM HANDLING ====================
+
 // Get selected branch from session
 $selected_branch_id = $_SESSION['user_branch_id'] ?? null;
 

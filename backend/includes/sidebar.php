@@ -23,15 +23,47 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
         
         <?php if (($_SESSION['admin_role'] ?? 'superadmin') == 'superadmin'): ?>
-        <a href="../content/banners.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'banners.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
-            <i class="fas fa-images w-5 text-center"></i>
-            <span class="font-medium">Banner</span>
-        </a>
-        
-        <a href="../products/best_sellers.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'best_sellers.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
-            <i class="fas fa-star w-5 text-center"></i>
-            <span class="font-medium">Best Sellers</span>
-        </a>
+        <!-- Homepage Management Section -->
+        <div class="pt-2 mt-4 border-t border-white/10">
+            <div class="px-3 py-2 mb-2">
+                <p class="text-xs font-bold uppercase text-amber-300/60 tracking-widest">Kelola Homepage</p>
+            </div>
+            
+            <a href="../content/banners.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'banners.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-images w-5 text-center"></i>
+                <span class="font-medium">Hero / Banner</span>
+            </a>
+            
+            <a href="../content/about.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'about.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-info-circle w-5 text-center"></i>
+                <span class="font-medium">Tentang Kami</span>
+            </a>
+            
+            <a href="../content/whyus.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'whyus.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-lightbulb w-5 text-center"></i>
+                <span class="font-medium">Keunggulan Kami</span>
+            </a>
+            
+            <a href="../content/testimonials.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'testimonials.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-comments w-5 text-center"></i>
+                <span class="font-medium">Testimonial</span>
+            </a>
+            
+            <a href="../content/contact.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'contact.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-envelope w-5 text-center"></i>
+                <span class="font-medium">Hubungi Kami</span>
+            </a>
+            
+            <a href="../content/cta.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'cta.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-bullhorn w-5 text-center"></i>
+                <span class="font-medium">Call To Action</span>
+            </a>
+            
+            <a href="../products/best_sellers.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'best_sellers.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">
+                <i class="fas fa-star w-5 text-center"></i>
+                <span class="font-medium">Kreasi Unggulan</span>
+            </a>
+        </div>
         <?php endif; ?>
         
         <a href="../orders/orders.php" class="flex items-center space-x-3 p-3 rounded-xl transition-all <?php echo ($current_page == 'orders.php') ? 'bg-white/10 text-white shadow-lg' : 'text-amber-100/70 hover:bg-white/5 hover:text-white'; ?>">

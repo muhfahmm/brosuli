@@ -1,13 +1,26 @@
-<!-- Contact Us Section -->
+<!-- Contact Us Section (Dinamis dari tb_contact_section) -->
 <section id="contact-form" class="py-24 bg-cream">
     <div class="max-w-4xl mx-auto px-6">
+        <?php
+        // Get contact section data from database
+        $contact_stmt = $pdo->query("SELECT * FROM tb_contact_section WHERE is_active = 1 LIMIT 1");
+        $contact_data = $contact_stmt->fetch();
+        
+        if ($contact_data):
+        ?>
         <div class="text-center mb-16">
-            <span class="text-secondary font-bold tracking-widest uppercase text-sm">Hubungi Kami</span>
-            <h2 class="text-4xl md:text-5xl font-serif font-bold mt-4 text-primary">Kirim Pesan untuk Kami</h2>
-            <p class="text-gray-500 text-lg mt-4">Ada pertanyaan atau saran? Hubungi kami sekarang dan kami akan merespons dalam waktu 24 jam.</p>
+            <span class="text-secondary font-bold tracking-widest uppercase text-sm"><?php echo htmlspecialchars($contact_data['section_title']); ?></span>
+            <h2 class="text-4xl md:text-5xl font-serif font-bold mt-4 text-primary"><?php echo htmlspecialchars($contact_data['main_heading']); ?></h2>
+            <p class="text-gray-500 text-lg mt-4"><?php echo htmlspecialchars($contact_data['subtitle']); ?></p>
         </div>
 
         <div class="bg-white rounded-3xl p-10 shadow-lg border border-amber-50">
+            <?php if ($contact_success): ?>
+            <div class="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex items-center space-x-3 animate-pulse">
+                <i class="fas fa-check-circle"></i>
+                <span>✅ Pesan Anda berhasil dikirim! Kami akan merespons dalam 24 jam.</span>
+            </div>
+            <?php endif; ?>
             <form method="POST" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -30,13 +43,17 @@
 
                 <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-bold py-4 rounded-2xl transition-all shadow-lg transform hover:scale-105">
                     <i class="fas fa-paper-plane mr-2"></i>
-                    Kirim Pesan
+                    <?php echo htmlspecialchars($contact_data['form_submit_button']); ?>
                 </button>
             </form>
 
             <p class="text-center text-gray-400 text-sm mt-6">
-                Atau hubungi kami langsung: <a href="https://wa.me/62895327349264" target="_blank" class="text-green-500 hover:text-green-600 font-bold">WhatsApp</a> | <a href="tel:+6289532734926" class="text-secondary hover:text-amber-700 font-bold">Telepon</a>
+                <?php echo htmlspecialchars($contact_data['contact_note']); ?>: 
+                <a href="https://wa.me/<?php echo htmlspecialchars($contact_data['whatsapp_number']); ?>" target="_blank" class="text-green-500 hover:text-green-600 font-bold">WhatsApp</a> 
+                | 
+                <a href="tel:<?php echo htmlspecialchars($contact_data['phone_number']); ?>" class="text-secondary hover:text-amber-700 font-bold">Telepon</a>
             </p>
         </div>
+        <?php endif; ?>
     </div>
 </section>

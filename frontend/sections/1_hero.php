@@ -1,10 +1,17 @@
-<!-- Hero Section with Swiper -->
+<!-- Hero Section with Swiper (Dinamis dari tb_banners) -->
 <section id="home" class="relative h-[85vh] md:h-screen pt-16 overflow-hidden">
     <div class="swiper heroSwiper h-full w-full">
         <div class="swiper-wrapper">
-            <?php foreach ($banners as $banner): ?>
+            <?php 
+            // Get active banners from database
+            $banner_stmt = $pdo->query("SELECT * FROM tb_banners WHERE is_active = 1 ORDER BY created_at DESC");
+            $active_banners = $banner_stmt->fetchAll();
+            
+            if (!empty($active_banners)):
+                foreach ($active_banners as $banner): 
+            ?>
             <div class="swiper-slide hero-slide flex items-center justify-center text-white" 
-                 style="background-image: url('<?php echo $banner['image_url']; ?>');">
+                 style="background-image: url('<?php echo htmlspecialchars($banner['image_url']); ?>');">
                 <div class="relative text-center px-6 max-w-4xl z-10">
                     <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight drop-shadow-lg">
                         <?php echo htmlspecialchars($banner['title']); ?>
@@ -19,9 +26,10 @@
                     </div>
                 </div>
             </div>
-            <?php endforeach; ?>
-            
-            <?php if (empty($banners)): ?>
+            <?php 
+                endforeach;
+            else:
+            ?>
             <div class="swiper-slide hero-slide flex items-center justify-center text-white bg-primary">
                 <div class="relative text-center px-6 max-w-4xl z-10">
                     <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight">Selamat Datang di Brosuli</h1>
@@ -32,7 +40,7 @@
             <?php endif; ?>
         </div>
         
-        <?php if (count($banners) > 1): ?>
+        <?php if (!empty($active_banners) && count($active_banners) > 1): ?>
             <div class="swiper-pagination !bottom-10"></div>
             <div class="swiper-button-next !text-white !right-10 hidden md:flex !w-14 !h-14 !bg-white/10 !backdrop-blur-md !rounded-full hover:!bg-white/20 transition-all after:!content-['']">
                 <i class="fas fa-chevron-right text-xl"></i>
