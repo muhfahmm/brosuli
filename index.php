@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once '../db/db.php';
-require_once '../config.php';
+require_once 'db/db.php';
+require_once 'config.php';
 
 // Get selected branch from session
 $selected_branch_id = $_SESSION['user_branch_id'] ?? null;
@@ -89,7 +89,7 @@ if ($selected_branch_id) {
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="js/cart.js?v=1.2" defer></script>
+    <script src="frontend/js/cart.js?v=1.2" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://app.midtrans.com/snap/snap.js" data-client-key="<?php echo MIDTRANS_CLIENT_KEY; ?>"></script>
@@ -141,7 +141,7 @@ if ($selected_branch_id) {
             </div>
             <div class="hidden md:flex items-center space-x-8 font-medium">
                 <a href="#home" class="hover:text-secondary transition-colors">Beranda</a>
-                <a href="catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
+                <a href="frontend/catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a>
                 <button onclick="document.getElementById('branchModal').classList.remove('hidden')" class="flex items-center space-x-2 text-secondary hover:text-primary transition-all bg-secondary/10 px-4 py-1.5 rounded-full border border-secondary/20">
                     <i class="fas fa-map-marker-alt"></i>
                     <span class="text-sm font-bold"><?php echo htmlspecialchars($selected_branch_name); ?></span>
@@ -152,7 +152,7 @@ if ($selected_branch_id) {
                     <i class="fas fa-shopping-bag text-2xl"></i>
                     <span class="cart-count absolute -top-1 -right-1 bg-secondary text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold border-2 border-white">0</span>
                 </button>
-                <button onclick="location.href='catalog.php'" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md transform hover:scale-105 hidden sm:block">
+                <button onclick="location.href='frontend/catalog.php'" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-secondary transition-all shadow-md transform hover:scale-105 hidden sm:block">
                     Pesan Sekarang
                 </button>
             </div>
@@ -165,7 +165,7 @@ if ($selected_branch_id) {
             <div class="swiper-wrapper">
                 <?php foreach ($banners as $banner): ?>
                 <div class="swiper-slide hero-slide flex items-center justify-center text-white" 
-                     style="background-image: url('../<?php echo $banner['image_url']; ?>');">
+                     style="background-image: url('<?php echo $banner['image_url']; ?>');">
                     <div class="relative text-center px-6 max-w-4xl z-10">
                         <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight drop-shadow-lg">
                             <?php echo htmlspecialchars($banner['title']); ?>
@@ -174,7 +174,7 @@ if ($selected_branch_id) {
                             <?php echo nl2br(htmlspecialchars($banner['subtitle'])); ?>
                         </p>
                         <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                            <a href="catalog.php" class="w-full sm:w-auto bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all shadow-xl hover:shadow-secondary/50">
+                            <a href="frontend/catalog.php" class="w-full sm:w-auto bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all shadow-xl hover:shadow-secondary/50">
                                 Jelajahi Menu
                             </a>
                         </div>
@@ -187,7 +187,7 @@ if ($selected_branch_id) {
                     <div class="relative text-center px-6 max-w-4xl z-10">
                         <h1 class="text-4xl md:text-7xl font-serif font-bold mb-6 leading-tight">Selamat Datang di Brosuli</h1>
                         <p class="text-base md:text-xl mb-10 opacity-90 max-w-2xl mx-auto font-light leading-relaxed">Pengalaman Bakery Otentik Sejak 2009</p>
-                        <a href="catalog.php" class="bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all">Jelajahi Menu</a>
+                        <a href="frontend/catalog.php" class="bg-secondary text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-amber-600 transition-all">Jelajahi Menu</a>
                     </div>
                 </div>
                 <?php endif; ?>
@@ -248,7 +248,7 @@ if ($selected_branch_id) {
                     <span class="text-secondary font-bold tracking-widest uppercase text-sm">Terlaris</span>
                     <h2 class="text-4xl md:text-5xl font-serif font-bold mt-2 text-primary">Kreasi Unggulan</h2>
                 </div>
-                <a href="catalog.php" class="mt-6 md:mt-0 text-primary font-bold hover:text-secondary flex items-center space-x-2 border-b-2 border-primary hover:border-secondary transition-all pb-1">
+                <a href="frontend/catalog.php" class="mt-6 md:mt-0 text-primary font-bold hover:text-secondary flex items-center space-x-2 border-b-2 border-primary hover:border-secondary transition-all pb-1">
                     <span>Lihat Semua Produk</span>
                     <i class="fas fa-arrow-right text-xs"></i>
                 </a>
@@ -260,7 +260,7 @@ if ($selected_branch_id) {
                     <div class="bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 group border border-amber-50">
                         <div class="relative h-64 overflow-hidden bg-cream">
                             <?php if ($product['image_url']): ?>
-                                <img src="../<?php echo $product['image_url']; ?>" 
+                                <img src="<?php echo $product['image_url']; ?>" 
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                             <?php else: ?>
                                 <div class="w-full h-full flex items-center justify-center text-primary/20">
@@ -284,7 +284,7 @@ if ($selected_branch_id) {
                                     <?php endif; ?>
                                 </div>
                                 <?php if (!$selected_branch_id || $product['stock'] > 0): ?>
-                                <button onclick='handleAddToCart(<?php echo json_encode(["id" => $product["id"], "name" => $product["name"], "price" => (float)$product["price"], "image" => "../" . $product["image_url"]]); ?>)' 
+                                <button onclick='handleAddToCart(<?php echo json_encode(["id" => $product["id"], "name" => $product["name"], "price" => (float)$product["price"], "image" => $product["image_url"]]); ?>)' 
                                     class="w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-secondary transition-colors shadow-lg">
                                     <i class="fas fa-plus"></i>
                                 </button>
@@ -330,8 +330,8 @@ if ($selected_branch_id) {
                     <h4 class="font-bold text-lg mb-8">Tautan Cepat</h4>
                     <ul class="space-y-4 text-gray-500">
                         <li><a href="index.php#home" class="hover:text-secondary transition-colors">Beranda</a></li>
-                        <li><a href="catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a></li>
-                        <li><a href="location.php" class="hover:text-secondary transition-colors">Lokasi</a></li>
+                        <li><a href="frontend/catalog.php" class="hover:text-secondary transition-colors">Menu Kami</a></li>
+                        <li><a href="frontend/location.php" class="hover:text-secondary transition-colors">Lokasi</a></li>
                     </ul>
                 </div>
                 
@@ -485,7 +485,7 @@ if ($selected_branch_id) {
             const formData = new FormData();
             formData.append('branch_id', id);
             
-            fetch('api/set_branch.php', {
+            fetch('frontend/api/set_branch.php', {
                 method: 'POST',
                 body: formData
             })
